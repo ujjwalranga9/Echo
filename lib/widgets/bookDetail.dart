@@ -173,7 +173,7 @@ class _BookDetailState extends State<BookDetail> {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(builder: (_) {
                                                     AudioPlayerPage.audioFileNo = -1;
-                                                    return AudioPlayerPage(book: widget.book,);
+                                                    return AudioPlayerPage(book: widget.book,saved: downloaded(widget.book.title) == true ? true :false);
                                                   })
                                               );
                                             },
@@ -262,7 +262,7 @@ class _BookDetailState extends State<BookDetail> {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(builder: (ctx) {
                                                   AudioPlayerPage.audioFileNo = index;
-                                                  return AudioPlayerPage(book: widget.book,);
+                                                  return AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false );
                                                 })
                                             );
                                           },

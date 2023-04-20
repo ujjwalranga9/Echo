@@ -4,7 +4,6 @@ import 'package:echo/player/notifier/progress_notifier.dart';
 import 'package:echo/services/download.dart';
 import 'package:echo/widgets/imageWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:hive/hive.dart';
 import 'class/book.dart';
 import 'main.dart';
@@ -17,8 +16,9 @@ class AudioPlayerPage extends StatefulWidget {
 
   static int audioFileNo = -1;
   final Book book;
+  bool saved;
   static List<String> oldPosition =[];
-   AudioPlayerPage({Key? key, required this.book}) : super(key: key);
+   AudioPlayerPage({Key? key, required this.book,required this.saved}) : super(key: key);
   @override
   State<AudioPlayerPage> createState() => _AudioPlayerPageState();
 }
@@ -51,23 +51,31 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
       pageManager.setBook(widget.book);
     }
 
+    if(widget.saved) {
+      Future.delayed(const Duration(seconds: 0, milliseconds: 500)).then((
+          value) => seekOld());
+    }else {
+      Future.delayed(const Duration(seconds: 2, milliseconds: 0)).then((
+          value) => seekOld());
+    }
+
 
 
     super.initState();
 
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
     //   seekOld();
-    //   setState(() {
-    //
-    //   });
+    //   setState(() {});
     //   print("\n\n\n\nBuild Completed");
     // });
-    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        seekOld();
-        setState(() {});
-      });
-    }
+
+
+    // if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+    //   SchedulerBinding.instance.addPostFrameCallback((_) {
+    //     seekOld();
+    //     setState(() {});
+    //   });
+    // }
   }
 
   @override
