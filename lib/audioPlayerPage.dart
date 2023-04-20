@@ -50,18 +50,30 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
       AudioPlayerPage.audioFileNo = 0;
       pageManager.setBook(widget.book);
     }
+
+
+
     super.initState();
-    // if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
-    //   SchedulerBinding.instance.addPostFrameCallback((_) {
-    //     seekOld();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   seekOld();
+    //   setState(() {
+    //
     //   });
-    // }
+    //   print("\n\n\n\nBuild Completed");
+    // });
+    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        seekOld();
+        setState(() {});
+      });
+    }
   }
+
 
 
   void seekOld(){
     pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
-
   }
 
   Duration seekValue = const Duration(seconds: 5);
@@ -71,6 +83,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   Widget build(BuildContext context){
 
     var val = MediaQuery.of(context).size;
+
 
     return Scaffold(
 
@@ -125,12 +138,13 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                       IconButton(
                         iconSize: 25,
                         color: Colors.white,
-                        onPressed: (){
-                          print("\n");
-                          print(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
-                          print("\n");
-                          pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
-                        },
+                        onPressed: seekOld,
+                        // onPressed: (){
+                        //   print("\n");
+                        //   print(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+                        //   print("\n");
+                        //   pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+                        // },
                         icon:const Icon(Icons.bookmark,),
                       ),
                       Expanded(child: Container()),
@@ -141,9 +155,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
                           setState(() {
                             if(pageManager.progressNotifier.value.current < seekValue){
-
                               pageManager.seek( const Duration(seconds: 0));
-
                             }else{
                               pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -seekValue.inSeconds));
                             }
