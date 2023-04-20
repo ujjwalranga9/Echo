@@ -118,7 +118,20 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                     child: Center(
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: ImageWidget(width: 300,book: widget.book,)
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ImageWidget(width: 300,book: widget.book,),
+                              Container(
+                                width: 300,
+                                decoration: BoxDecoration(
+                                     border: Border.all(width: 5,color: Colors.black),
+                                     borderRadius: BorderRadius.circular(10)
+                                    ),
+                                  )
+
+                            ],
+                          )
                       ),
                     ),
                   ),

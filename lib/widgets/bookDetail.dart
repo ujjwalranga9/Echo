@@ -90,7 +90,13 @@ class _BookDetailState extends State<BookDetail> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: ImageWidget(book: widget.book,width: 175,height: 260,),
+                              child: Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  ImageWidget(book: widget.book,width: 175,height: 260),
+                                  Container(width: 175,height: 260,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.grey),borderRadius: BorderRadius.circular(10)),)
+                                ],
+                              ),
                             ),
                             const SizedBox(width: 10,),
                             SizedBox(
@@ -313,7 +319,12 @@ class _BookDetailState extends State<BookDetail> {
                                           Text(widget.book.duration[index].substring(0,widget.book.duration[index].length-7),style: const TextStyle(color: Colors.white)),
                                           leading: ClipRRect(
                                               borderRadius: BorderRadius.circular(10),
-                                              child: ImageWidget(book: widget.book,width: 55,height: 55,)
+                                              child: Stack(
+                                                children: [
+                                                  ImageWidget(book: widget.book,width: 55,height: 55,),
+                                                  Container(width: 55,height: 55,decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),border: Border.all(width: 0.5,color: Colors.grey)),)
+                                                ],
+                                              )
                                           ),
                                           title: Text('${index+1}. ${widget.book.getBookName()}',
                                             style: const TextStyle(color: Colors.white),),

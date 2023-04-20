@@ -78,7 +78,13 @@ class LibraryGrid extends StatelessWidget {
                                children: [
                                  ClipRRect(
                                      borderRadius: BorderRadius.circular(10),
-                                     child: ImageWidget(book: box.getAt(index)!,width: 175,height: 260)),
+                                     child: Stack(
+                                       children: [
+                                         ImageWidget(book: box.getAt(index)!,width: 178.3,height: 265),
+                                         Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.grey),borderRadius: BorderRadius.circular(10)),)
+                                       ],
+                                     ),
+                                 ),
 
 
                                  Row(
