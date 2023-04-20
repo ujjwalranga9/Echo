@@ -70,6 +70,12 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     }
   }
 
+  @override
+  void dispose(){
+
+    super.dispose();
+  }
+
 
 
   void seekOld(){
