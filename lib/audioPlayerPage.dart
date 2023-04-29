@@ -17,6 +17,7 @@ enum ProgressState{
 class AudioPlayerPage extends StatefulWidget {
 
   static int audioFileNo = -1;
+  static Duration seekValue = const Duration(seconds: 5);
   final Book book;
   bool saved;
   Function updateBookDetail;
@@ -42,7 +43,9 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     }
 
     if(AudioPlayerPage.audioFileNo != -1 ){
+
       if(downloaded("${widget.book.title}_${AudioPlayerPage.audioFileNo}")){
+
         pageManager.setAsset("${widget.book.title}_${AudioPlayerPage.audioFileNo}");
       }else{
         pageManager.setUrl(widget.book.audio[ AudioPlayerPage.audioFileNo]);
@@ -53,7 +56,8 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
       AudioPlayerPage.audioFileNo = 0;
       pageManager.setBook(widget.book);
     }
-
+    pageManager.audioFileNum = AudioPlayerPage.audioFileNo;
+    pageManager.setBook(widget.book);
     if(widget.saved) {
       Future.delayed(const Duration(seconds: 0, milliseconds: 500)).then((
           value) => seekOld());
@@ -89,10 +93,10 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
 
   void seekOld(){
-    pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+    audioHandler.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
   }
 
-  Duration seekValue = const Duration(seconds: 5);
+
   double speed = 1.0;
 
   @override
@@ -190,10 +194,10 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                           onPressed: (){
 
                             setState(() {
-                              if(pageManager.progressNotifier.value.current < seekValue){
-                                pageManager.seek( const Duration(seconds: 0));
+                              if(pageManager.progressNotifier.value.current < AudioPlayerPage.seekValue){
+                                audioHandler.seek( const Duration(seconds: 0));
                               }else{
-                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -seekValue.inSeconds));
+                                audioHandler.seek(Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -AudioPlayerPage.seekValue.inSeconds));
                               }
                             });
                           },
@@ -205,11 +209,11 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                           color: Colors.white,
                           onPressed: (){
                             setState(()  {
-                              if(pageManager.progressNotifier.value.current >  Duration(seconds: pageManager.progressNotifier.value.total.inSeconds -seekValue.inSeconds)){
+                              if(pageManager.progressNotifier.value.current >  Duration(seconds: pageManager.progressNotifier.value.total.inSeconds -AudioPlayerPage.seekValue.inSeconds)){
 
-                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
+                                audioHandler.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
                               }else{
-                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +seekValue.inSeconds));
+                                audioHandler.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +AudioPlayerPage.seekValue.inSeconds));
                               }
                             });
                           },
@@ -234,7 +238,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                                         if(speed < 0.5)return;
                                         setState((){
                                           speed -= 0.1;
-                                          pageManager.setSpeed(speed);
+                                          audioHandler.setSpeed(speed);
                                         });
                                       },child: const Text("-",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
                                       Text(speed.toStringAsFixed(1),style:const  TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
@@ -242,7 +246,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                                         if(speed > 3.0)return;
                                         setState((){
                                           speed += 0.1;
-                                          pageManager.setSpeed(speed);
+                                          audioHandler.setSpeed(speed);
                                         });
                                       },child: const Text("+",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
                                     ],
@@ -300,7 +304,7 @@ class AudioProgressBar extends StatelessWidget {
           progress: value.current,
           buffered: value.buffered,
           total: value.total,
-          onSeek: pageManager.seek,
+          onSeek: audioHandler.seek,
         );
       },
     );
@@ -325,7 +329,7 @@ class PlayButton extends StatelessWidget {
                 icon: const Icon(Icons.play_circle_rounded),
                 splashRadius: 20,
                 iconSize: 70,
-                onPressed: pageManager.play,
+                onPressed: audioHandler.play,
               ),
                 SizedBox(
                     height: 70,
@@ -342,7 +346,7 @@ class PlayButton extends StatelessWidget {
               icon: const Icon(Icons.play_circle_rounded),
               iconSize: 70,
               splashRadius: 20,
-              onPressed: pageManager.play,
+              onPressed: audioHandler.play,
             );
           case ButtonState.playing:
             return IconButton(
@@ -350,7 +354,7 @@ class PlayButton extends StatelessWidget {
               icon: const Icon(Icons.pause_circle_rounded),
               splashRadius: 20,
               iconSize: 70,
-              onPressed: pageManager.pause,
+              onPressed: audioHandler.pause,
             );
         }
       },

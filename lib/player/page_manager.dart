@@ -1,15 +1,16 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:echo/services/download.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../audioPlayerPage.dart';
 import '../class/book.dart';
 import '../main.dart';
-import '../services/download.dart';
+
+import 'audioService/playlist_repository.dart';
+import 'audioService/service_locator.dart';
 import 'notifier/play_button_notifier.dart';
 import 'notifier/progress_notifier.dart';
-
+final audioHandler = getIt<AudioHandler>();
 
 class PageManager {
   final currentSongTitleNotifier = ValueNotifier<String>('');
@@ -22,7 +23,8 @@ class PageManager {
 
   late AudioPlayer _audioPlayer;
   late ConcatenatingAudioSource _playlist;
-  late Book book;
+  int audioFileNum = 0;
+  Book book;
 
   PageManager(this.book) {
     init();
@@ -34,28 +36,97 @@ class PageManager {
   void init() async {
     _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
+    // _loadPlaylist();
+    _listenToPlaybackState();
+    _listenToCurrentPosition();
     _listenForChangesInPlayerState();
     _listenForChangesInPlayerPosition();
     _listenForChangesInBufferedPosition();
     _listenForChangesInTotalDuration();
   }
+  void _listenToPlaybackState() {
+    audioHandler.playbackState.listen((playbackState) {
+      final isPlaying = playbackState.playing;
+      final processingState = playbackState.processingState;
+      if (processingState == AudioProcessingState.loading ||
+          processingState == AudioProcessingState.buffering) {
+        playButtonNotifier.value = ButtonState.loading;
+      } else if (!isPlaying) {
+        playButtonNotifier.value = ButtonState.paused;
+      } else if (processingState != AudioProcessingState.completed) {
+        playButtonNotifier.value = ButtonState.playing;
+      } else {
+        audioHandler.seek(Duration.zero);
+        audioHandler.pause();
+      }
+    });
+  }
+  // Future<void> _loadPlaylist() async {
+  //   final songRepository = getIt<PlaylistRepository>();
+  //   final playlist = await songRepository.fetchInitialPlaylist();
+  //   final mediaItems = playlist
+  //       .map((song) => MediaItem(
+  //     id: song['id'] ?? '',
+  //     album: song['album'] ?? '',
+  //     title: song['title'] ?? '',
+  //     extras: {'url': song['url']},
+  //   ))
+  //       .toList();
+  //   audioHandler.addQueueItems(mediaItems);
+  // }
+  void _listenToCurrentPosition() {
+    AudioService.position.listen((position) {
+      final oldState = progressNotifier.value;
+      progressNotifier.value = ProgressBarState(
+        current: position,
+        buffered: oldState.buffered,
+        total: oldState.total,
+      );
+    });
+  }
 
   void _setInitialPlaylist() async {
 
-    _playlist = ConcatenatingAudioSource(
-        children: book.audio.map((e) {
-          return AudioSource.uri(Uri.parse(e),
-              tag: MediaItem(
-            // Specify a unique ID for each media item:
-            id: book.id,
-            // Metadata to display in the notification:
-            album: book.getAuthor(),
-            title: book.getBookName(),
-            artUri: Uri.parse(book.getImage()),
-          ));
-        }).toList());
+    // _playlist = ConcatenatingAudioSource(
+    //
+    //     children: book.audio.map((e) {
+    //
+    //       return AudioSource.uri(Uri.parse(e),
+    //           tag: MediaItem(
+    //           id: book.id,
+    //          album: book.getAuthor(),
+    //         title: book.getBookName(),
+    //         artUri: Uri.parse(book.getImage()),
+    //
+    //       ));
+    //     }).toList());
+    // await _audioPlayer.setAudioSource(_playlist);
+    if(downloaded("${book.title}_$audioFileNum")){
+      print("Downloaded");
+      final dir = externalDirectory;
+      final filePath = '${dir.path}/${book.title}_$audioFileNum.mp3';
 
-    await _audioPlayer.setAudioSource(_playlist);
+      final mediaItem = MediaItem(
+        id:  book.id,
+        album: book.getAuthor(),
+        title: book.getBookName(),
+        artUri: Uri.parse(book.getImage()),
+        extras:  {'url': filePath},
+        playable: true
+      );
+      audioHandler.addQueueItem(mediaItem);
+    }else{
+      print("Online");
+      final mediaItem = MediaItem(
+        id:  book.id,
+        album: book.getAuthor(),
+        title: book.getBookName(),
+        artUri: Uri.parse(book.getImage()),
+        extras:  {'url': book.audio[audioFileNum]},
+          playable: false
+      );
+      audioHandler.addQueueItem(mediaItem);
+    }
 
   }
 
@@ -122,23 +193,22 @@ class PageManager {
    _setInitialPlaylist();
   }
    Future<String> duration() async {
-
     return _audioPlayer.duration.toString();
   }
 
-  void play() async {
-
-     _audioPlayer.play();
-  }
-
-  void pause() {
-
-    _audioPlayer.pause();
-  }
-
-  void seek(Duration position) {
-    _audioPlayer.seek(position);
-  }
+  // void play() async {
+  //     audioHandler.play();
+  //    // _audioPlayer.play();
+  // }
+  //
+  // void pause() {
+  //   audioHandler.pause();
+  //   // _audioPlayer.pause();
+  // }
+  //
+  // void seek(Duration position) {
+  //   _audioPlayer.seek(position);
+  // }
 
   void dispose() {
     _audioPlayer.dispose();
