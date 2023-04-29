@@ -6,8 +6,9 @@ import 'libraryGrid.dart';
 import 'libraryList.dart';
 
 class LibraryView extends StatefulWidget {
-  const LibraryView({Key? key}) : super(key: key);
+  LibraryView({required this.state,Key? key}) : super(key: key);
   static bool listView = false;
+  int state;
 
   @override
   State<LibraryView> createState() => _LibraryViewState();
@@ -15,21 +16,65 @@ class LibraryView extends StatefulWidget {
 
 class _LibraryViewState extends State<LibraryView> {
 
-late int num =0;
-final _textController = TextEditingController();
-bool search = false;
+  var box = Hive.box<Book>("Lib");
+  var temp = Hive.box<Book>("temp");
+
 @override
 void initState(){
   super.initState();
-  num = Hive.box<Book>('Lib').length;
+
+}
+ void stateChanged(){
+  setState(() {
+  });
+}
+
+ void bookFilter(int state) async {
+    await temp.clear();
+  if(state == 1){
+    for(int i = 0 ; i < box.length ; i++){
+      if(box.getAt(i)!.duration[0] != '0') {
+
+        if (box.getAt(i)!.getPercentageListened() != "0%" && box.getAt(i)!.getPercentageListened() != "100%") {
+          temp.add(box.getAt(i)!);
+        }
+      }
+    }
+
+  }else if(state == 2){
+    for(int i = 0 ; i < box.length ; i++){
+      if(box.getAt(i)!.duration[0] != '0') {
+        if (box.getAt(i)!.getPercentageListened() == "100%") {
+          temp.add(box.getAt(i)!);
+        }
+      }
+    }
+  }else {
+    for(int i = 0 ; i < box.length ; i++) {
+      if (box.getAt(i)!.duration[0] == '0') {
+
+          temp.add(box.getAt(i)!);
+      }else if(box.getAt(i)!.getPercentageListened() == "0%"){
+        temp.add(box.getAt(i)!);
+      }
+    }
+  }
+
+}
+
+void onDelete(int index){
+  box.delete(box.getAt(index)!.getBookName() + box.getAt(index)!.id);
+  setState((){});
 }
 
   @override
   Widget build(BuildContext context) {
+     bookFilter(widget.state);
+
     return  Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-          child: (LibraryView.listView == false) ? const LibraryGrid() : const LibraryList(),
+          child: (LibraryView.listView == false) ?  LibraryGrid(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );

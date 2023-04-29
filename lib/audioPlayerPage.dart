@@ -1,6 +1,8 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/notifier/progress_notifier.dart';
+import 'package:echo/player/page_manager.dart';
 import 'package:echo/services/download.dart';
 import 'package:echo/widgets/imageWidget.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,9 @@ class AudioPlayerPage extends StatefulWidget {
   static int audioFileNo = -1;
   final Book book;
   bool saved;
+  Function updateBookDetail;
   static List<String> oldPosition =[];
-   AudioPlayerPage({Key? key, required this.book,required this.saved}) : super(key: key);
+   AudioPlayerPage({Key? key, required this.book,required this.saved,required this.updateBookDetail}) : super(key: key);
   @override
   State<AudioPlayerPage> createState() => _AudioPlayerPageState();
 }
@@ -60,7 +63,6 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     }
 
 
-
     super.initState();
 
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -99,159 +101,167 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
     var val = MediaQuery.of(context).size;
 
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+         widget.updateBookDetail();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
 
-      backgroundColor: Colors.black,
 
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround ,
-          children: [
-            SizedBox(height: val.height*0.03,),
-            SizedBox(
-              height: val.height*0.7,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(height: val.height*0.09,),
-                  Expanded(
-                    child: Center(
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              ImageWidget(width: 300,book: widget.book,),
-                              Container(
-                                width: 300,
-                                decoration: BoxDecoration(
-                                     border: Border.all(width: 5,color: Colors.black),
-                                     borderRadius: BorderRadius.circular(10)
-                                    ),
-                                  )
+        backgroundColor: Colors.black,
 
-                            ],
-                          )
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround ,
+            children: [
+              SizedBox(height: val.height*0.03,),
+              SizedBox(
+                height: val.height*0.7,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(height: val.height*0.09,),
+                    Expanded(
+                      child: Center(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ImageWidget(width: 300,book: widget.book,),
+                                Container(
+                                  width: 300,
+                                  decoration: BoxDecoration(
+                                       border: Border.all(width: 5,color: Colors.black),
+                                       borderRadius: BorderRadius.circular(10)
+                                      ),
+                                    )
+
+                              ],
+                            )
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: val.height*0.02,),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: FittedBox(child: Text(widget.book.getBookName(),style: const TextStyle(color:Colors.white,fontSize: 45,fontWeight: FontWeight.bold),)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: FittedBox(child: Text(widget.book.getAuthor(),style: const TextStyle(color:Colors.white,fontSize: 15,),)),
-                  ),
-                ],
+                    SizedBox(height: val.height*0.02,),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: FittedBox(child: Text(widget.book.getBookName(),style: const TextStyle(color:Colors.white,fontSize: 45,fontWeight: FontWeight.bold),)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: FittedBox(child: Text(widget.book.getAuthor(),style: const TextStyle(color:Colors.white,fontSize: 15,),)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: val.height*0.02,),
-            SizedBox(
-              height: val.height*0.2,
-              child: Column(
-                children: [
+              SizedBox(height: val.height*0.02,),
+              SizedBox(
+                height: val.height*0.2,
+                child: Column(
+                  children: [
 
-                  Padding(
-                        padding: const EdgeInsets.only(left: 20,right: 20),
-                              child: AudioProgressBar(book: widget.book),
-                           ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 10,),
-                      IconButton(
-                        iconSize: 25,
-                        color: Colors.white,
-                        onPressed: seekOld,
-                        // onPressed: (){
-                        //   print("\n");
-                        //   print(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
-                        //   print("\n");
-                        //   pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
-                        // },
-                        icon:const Icon(Icons.bookmark,),
-                      ),
-                      Expanded(child: Container()),
-                      IconButton(
-                        iconSize: 50,
-                        color: Colors.white,
-                        onPressed: (){
+                    Padding(
+                          padding: const EdgeInsets.only(left: 20,right: 20),
+                                child: AudioProgressBar(book: widget.book),
+                             ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 10,),
+                        IconButton(
+                          iconSize: 25,
+                          color: Colors.white,
+                          onPressed: seekOld,
+                          // onPressed: (){
+                          //   print("\n");
+                          //   print(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+                          //   print("\n");
+                          //   pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+                          // },
+                          icon:const Icon(Icons.bookmark,),
+                        ),
+                        Expanded(child: Container()),
+                        IconButton(
+                          iconSize: 50,
+                          color: Colors.white,
+                          onPressed: (){
 
-                          setState(() {
-                            if(pageManager.progressNotifier.value.current < seekValue){
-                              pageManager.seek( const Duration(seconds: 0));
-                            }else{
-                              pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -seekValue.inSeconds));
+                            setState(() {
+                              if(pageManager.progressNotifier.value.current < seekValue){
+                                pageManager.seek( const Duration(seconds: 0));
+                              }else{
+                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -seekValue.inSeconds));
+                              }
+                            });
+                          },
+                          icon:const Icon(Icons.fast_rewind_rounded,),
+                        ),
+                        const PlayButton(),
+                        IconButton(
+                          iconSize: 50,
+                          color: Colors.white,
+                          onPressed: (){
+                            setState(()  {
+                              if(pageManager.progressNotifier.value.current >  Duration(seconds: pageManager.progressNotifier.value.total.inSeconds -seekValue.inSeconds)){
+
+                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
+                              }else{
+                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +seekValue.inSeconds));
+                              }
+                            });
+                          },
+                          icon:const Icon(Icons.fast_forward_rounded),
+                        ),
+                        Expanded(child: Container()),
+                        IconButton(
+                          iconSize: 25,
+                          color: Colors.white,
+                          onPressed: (){
+                            showDialog(context: context, builder: (ctx){
+                              return  StatefulBuilder(
+                              builder: (context, setState) {
+                                return
+                                  AlertDialog(
+                                  backgroundColor: const Color(0xff101010),
+                                  title:const Center(child:  Text("Adjust Speed",style: TextStyle(color: Colors.white,fontSize: 20),)),
+                                  content: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      TextButton(onPressed: (){
+                                        if(speed < 0.5)return;
+                                        setState((){
+                                          speed -= 0.1;
+                                          pageManager.setSpeed(speed);
+                                        });
+                                      },child: const Text("-",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
+                                      Text(speed.toStringAsFixed(1),style:const  TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
+                                      TextButton(onPressed: (){
+                                        if(speed > 3.0)return;
+                                        setState((){
+                                          speed += 0.1;
+                                          pageManager.setSpeed(speed);
+                                        });
+                                      },child: const Text("+",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
+                                    ],
+                                  ),
+                                );
                             }
-                          });
-                        },
-                        icon:const Icon(Icons.fast_rewind_rounded,),
-                      ),
-                      const PlayButton(),
-                      IconButton(
-                        iconSize: 50,
-                        color: Colors.white,
-                        onPressed: (){
-                          setState(()  {
-                            if(pageManager.progressNotifier.value.current >  Duration(seconds: pageManager.progressNotifier.value.total.inSeconds -seekValue.inSeconds)){
-
-                              pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
-                            }else{
-                              pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +seekValue.inSeconds));
-                            }
-                          });
-                        },
-                        icon:const Icon(Icons.fast_forward_rounded),
-                      ),
-                      Expanded(child: Container()),
-                      IconButton(
-                        iconSize: 25,
-                        color: Colors.white,
-                        onPressed: (){
-                          showDialog(context: context, builder: (ctx){
-                            return  StatefulBuilder(
-                            builder: (context, setState) {
-                              return
-                                AlertDialog(
-                                backgroundColor: const Color(0xff101010),
-                                title:const Center(child:  Text("Adjust Speed",style: TextStyle(color: Colors.white,fontSize: 20),)),
-                                content: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TextButton(onPressed: (){
-                                      if(speed < 0.5)return;
-                                      setState((){
-                                        speed -= 0.1;
-                                        pageManager.setSpeed(speed);
-                                      });
-                                    },child: const Text("-",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
-                                    Text(speed.toStringAsFixed(1),style:const  TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
-                                    TextButton(onPressed: (){
-                                      if(speed > 3.0)return;
-                                      setState((){
-                                        speed += 0.1;
-                                        pageManager.setSpeed(speed);
-                                      });
-                                    },child: const Text("+",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
-                                  ],
-                                ),
-                              );
-                          }
-                          );
-                          });
-                        },
-                        icon:const Icon(Icons.speed,),
-                      ),
-                      const SizedBox(width: 10,),
-                    ],
-                  ),
-                ],
+                            );
+                            });
+                          },
+                          icon:const Icon(Icons.speed,),
+                        ),
+                        const SizedBox(width: 10,),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

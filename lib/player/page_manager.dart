@@ -25,13 +25,13 @@ class PageManager {
   late Book book;
 
   PageManager(this.book) {
-    _init();
+    init();
   }
   void setSpeed(double speed){
     _audioPlayer.setSpeed(speed);
 
   }
-  void _init() async {
+  void init() async {
     _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
     _listenForChangesInPlayerState();
@@ -54,6 +54,7 @@ class PageManager {
             artUri: Uri.parse(book.getImage()),
           ));
         }).toList());
+
     await _audioPlayer.setAudioSource(_playlist);
 
   }
@@ -127,7 +128,7 @@ class PageManager {
 
   void play() async {
 
-    _audioPlayer.play();
+     _audioPlayer.play();
   }
 
   void pause() {

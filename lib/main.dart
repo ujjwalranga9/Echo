@@ -1,17 +1,23 @@
 import 'dart:io';
+import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/page_manager.dart';
+import 'package:echo/player/page_manager2.dart';
+
+
 import 'package:echo/search.dart';
 import 'package:echo/settings.dart';
 import 'package:echo/widgets/libraryView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'class/book.dart';
 import 'loading.dart';
+import 'package:audio_service/audio_service.dart';
+
 
 late PageManager pageManager;
 late Directory directory;
@@ -21,7 +27,8 @@ bool timing = false;
 
 Future<void> main() async {
 
-  // var audio_service;
+
+
   // await audio_service.init(
   //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
   //   androidNotificationChannelName: 'Audio playback',
@@ -38,7 +45,8 @@ Future<void> main() async {
   await Hive.openBox<Book>('Books');
   await Hive.openBox<Book>('play');
   await Hive.openBox<Book>('Lib');
-
+  await Hive.openBox<Book>('temp');
+  await setupServiceLocator();
   runApp(const MyApp());
 
 }
@@ -55,6 +63,7 @@ class MyApp extends StatelessWidget {
       title: 'ECHO',
 
       theme: ThemeData(
+
 
 
         appBarTheme: const AppBarTheme(
@@ -93,14 +102,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
 
-  @override
-  void dispose(){
-
-
-
-    super.dispose();
-  }
-
 
   @override
   void initState(){
@@ -119,51 +120,82 @@ class _HomePageState extends State<HomePage> {
       pageManager = PageManager(b);
     }
 
+    getIt<PageManager2>().init();
+
     super.initState();
   }
 
+  void bigState(){
+    setState(() {
+
+    });
+  }
+
   bool isPlaying = false;
+  int state = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      // bottomNavigationBar: Container(
-      //   height: 50,
-      //   child: GNav(
-      //    // rippleColor: Colors.grey[800], // tab button ripple color when pressed
-      //    // hoverColor: Colors.grey[700], // tab button hover color
-      //     haptic: true, // haptic feedback
-      //     tabBorderRadius: 15,
-      //     tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
-      //     //tabBorder: Border.all(color: Colors.grey, width: 1), // tab button border
-      //     //tabShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 8)], // tab button shadow
-      //    // curve: Curves.easeOutExpo, // tab animation curves
-      //     //duration: Duration(milliseconds: 900), // tab animation duration
-      //     gap: 8, // the tab button gap between icon and text
-      //     color: Colors.grey[600], // unselected icon color
-      //     activeColor: Colors.purple, // selected icon and text color
-      //     iconSize: 25, // tab button icon size
-      //     tabBackgroundColor: Colors.purple.withOpacity(0.1), // selected tab background color
-      //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //
-      //     tabs: const [
-      //       GButton(
-      //         icon: Icons.list_rounded,
-      //         text: 'To Read',
-      //       ),
-      //       GButton(
-      //         icon: Icons.chrome_reader_mode_rounded,
-      //         text: 'Currently reading',
-      //       ),
-      //       GButton(
-      //         icon: Icons.done_all_rounded,
-      //         text: 'Completed',
-      //       ),
-      //     ],
-      //   ),
-      // ),
+      bottomNavigationBar: Container(
+        height: 50,
+        child: GNav(
+          selectedIndex: 1,
+         // rippleColor: Colors.grey[800], // tab button ripple color when pressed
+         // hoverColor: Colors.grey[700], // tab button hover color
+          haptic: true, // haptic feedback
+          tabBorderRadius: 20,
+          tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
+          //tabBorder: Border.all(color: Colors.grey, width: 1), // tab button border
+          //tabShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 8)], // tab button shadow
+         // curve: Curves.easeOutExpo, // tab animation curves
+          //duration: Duration(milliseconds: 900), // tab animation duration
+          gap: 8, // the tab button gap between icon and text
+          color: Colors.grey[600], // unselected icon color
+          activeColor: Colors.purple, // selected icon and text color
+          iconSize: 25, // tab button icon size
+          tabBackgroundColor: Colors.purple.withOpacity(0.1), // selected tab background color
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          onTabChange: (index){
+            state = index;
+          },
+
+          tabs:    [
+            GButton(
+              icon: Icons.list_rounded,
+              text: 'To Read',
+              onPressed: (){
+                setState(() {
+
+                });
+              },
+
+
+            ),
+            GButton(
+              icon: Icons.chrome_reader_mode_rounded,
+              text: 'Currently reading',
+              onPressed: (){
+                setState(() {
+                });
+              },
+
+            ),
+            GButton(
+              icon: Icons.done_all_rounded,
+              text: 'Completed',
+              onPressed: (){
+                setState(() {
+
+                });
+              },
+
+            ),
+          ],
+        ),
+      ),
 
       appBar: AppBar(
 
@@ -182,7 +214,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(onPressed: (){
             Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx){
-                return const Search();
+                return  Search(update: bigState);
               })
             );
           },
@@ -191,7 +223,6 @@ class _HomePageState extends State<HomePage> {
             splashRadius: 20,),
 
           IconButton(
-
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.setBool('listview', !LibraryView.listView);
@@ -225,10 +256,17 @@ class _HomePageState extends State<HomePage> {
 
 
 
-    body: Padding(
-      padding: EdgeInsets.all(10),
-      child: LibraryView(),
-    ),
+    body:
+    // DefaultTabController(
+      // length: 3,
+      // child: tabs(),
+
+      Padding(
+        padding: EdgeInsets.all(10),
+        child: LibraryView(state: state,),
+      ),
+
+    // ),
 
 
     floatingActionButton: FloatingActionButton(
@@ -289,4 +327,36 @@ class PlayButton extends StatelessWidget {
       },
     );
   }
+}
+
+Widget tabs(){
+  return TabBar(
+
+      tabs: [
+
+    TabBarView(
+      children: [Padding(
+        padding: EdgeInsets.all(10),
+        child: LibraryView(state: 0,),
+      ),
+      ],
+    ),
+
+        TabBarView(
+          children: [Padding(
+            padding: EdgeInsets.all(10),
+            child: LibraryView(state: 1,),
+          ),
+          ],
+        ),
+
+        TabBarView(
+          children: [Padding(
+            padding: EdgeInsets.all(10),
+            child: LibraryView(state: 2,),
+          ),
+          ],
+        ),
+  ]);
+
 }

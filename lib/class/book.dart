@@ -96,6 +96,27 @@ class Book{
     return length.toString();
   }
 
+  void done(){
+    if(duration[0] == '0'){
+      return;
+    }
+    for(int i = 0 ; i < duration.length ; i++){
+      position[i] = duration[i];
+    }
+  }
+
+  void reading(){
+    if(duration[0] == '0'){
+      return;
+    }
+
+    for(int i = 0 ; i < position.length ; i++){
+      position[i] = '0';
+    }
+    position[0] = '1';
+  }
+
+
   String getPercentageListened(){
     Duration length = Duration.zero;
     for(String i in duration){

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart';
 
 import '../class/book.dart';
 import 'bookDetail.dart';
 import 'imageWidget.dart';
 
 class LibraryList extends StatefulWidget {
-  const LibraryList({Key? key}) : super(key: key);
+  LibraryList({Key? key,required this.update,required this.delete,required this.temp,required this.filter,}) : super(key: key);
+
+
+  Function filter;
+  Function delete;
+  Function update;
+  Box<Book> temp;
 
   @override
   State<LibraryList> createState() => _LibraryListState();
@@ -20,9 +27,9 @@ class _LibraryListState extends State<LibraryList> {
 
         SliverToBoxAdapter(
           child: SizedBox(
-              height: MediaQuery.of(context).size.height*0.88,
+              height: MediaQuery.of(context).size.height*0.83,
               child: ValueListenableBuilder(
-                valueListenable: Hive.box<Book>('Lib').listenable(),
+                valueListenable: widget.temp.listenable(),
                 builder: (context , Box<Book>box,_){
                   return ListView.builder(
                       itemCount: box.length,
@@ -61,7 +68,7 @@ class _LibraryListState extends State<LibraryList> {
                                   ));
                             } ,
                             onDismissed: (direction){
-                              box.delete(bok!.getBookName() + bok.id);
+
                             },
                             direction: DismissDirection.endToStart,
                             background: Container(
@@ -80,7 +87,7 @@ class _LibraryListState extends State<LibraryList> {
                               onTap: (){
                                 Navigator.of(context).push(
                                     MaterialPageRoute(builder: (_) {
-                                      return  BookDetail(book: bok,);
+                                      return  BookDetail(book: bok,update: (){},);
                                     })
                                 );
                               },
