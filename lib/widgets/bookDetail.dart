@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 import 'package:echo/main.dart';
 import 'package:echo/services/download.dart';
@@ -30,6 +31,7 @@ class _BookDetailState extends State<BookDetail> {
   List<String> oldPosition=[];
 
 
+
   String? _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String? parsedString = parse(document.body?.text).documentElement?.text;
@@ -39,7 +41,7 @@ class _BookDetailState extends State<BookDetail> {
 
   @override
   void initState(){
-
+    super.initState();
     var box = Hive.box<Book>("Lib");
     if(box.containsKey(widget.book.getBookName() + widget.book.id)){
       setState((){
@@ -51,7 +53,17 @@ class _BookDetailState extends State<BookDetail> {
     }
     AudioPlayerPage.oldPosition = oldPosition;
 
-    super.initState();
+  }
+
+
+  Widget progressIndicator(int index){
+    return  ClipRRect(
+      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight:Radius.circular(10) ),
+      child: LinearProgressIndicator(
+        backgroundColor: const Color(0xff303030),
+        value:  widget.book.getListenedIndexLength(index),
+      ),
+    );
   }
 
   Future<void> setLength() async {
@@ -66,12 +78,13 @@ class _BookDetailState extends State<BookDetail> {
     audioPlayer.dispose();
   }
 
-  void updateState(){
-
-    setState(() {
-
-    });
+  Future<bool> updateState() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {});
+    widget.update();
+    return true;
   }
+
 
 
 
@@ -278,7 +291,19 @@ class _BookDetailState extends State<BookDetail> {
                                               //       return AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,);
                                               //     })
                                               // );
-                                              Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,),duration: Duration(milliseconds: 300)));
+
+
+                                              Navigator.push(
+                                                  context,
+                                                  PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,),duration: Duration(milliseconds: 300))
+                                              ).then((value) {
+                                                setState(() {
+                                                  print("Updated");
+                                                  updateState();
+                                                  progressIndicator(AudioPlayerPage.audioFileNo);
+                                                });
+                                              });
+
 
                                             },
 
@@ -339,13 +364,7 @@ class _BookDetailState extends State<BookDetail> {
                                               style: const TextStyle(color: Colors.white),),
                                             //subtitle:Text(widget.book.getAuthor(),style:const TextStyle(color: Colors.white),),
                                           ),
-                                          ClipRRect(
-                                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight:Radius.circular(10) ),
-                                            child: LinearProgressIndicator(
-                                              backgroundColor: const Color(0xff303030),
-                                              value:  widget.book.getListenedIndexLength(index),
-                                            ),
-                                          ),
+                                          progressIndicator(index),
                                         ],
                                       ),
                                     ),

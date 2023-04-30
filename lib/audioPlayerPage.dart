@@ -16,8 +16,9 @@ enum ProgressState{
 
 class AudioPlayerPage extends StatefulWidget {
 
-  static int audioFileNo = -1;
+  static int audioFileNo = 0;
   static Duration seekValue = const Duration(seconds: 5);
+  static Duration currentPosition = Duration.zero;
   final Book book;
   bool saved;
   Function updateBookDetail;
@@ -42,20 +43,18 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
       box.add(widget.book);
     }
 
-    if(AudioPlayerPage.audioFileNo != -1 ){
-
-      if(downloaded("${widget.book.title}_${AudioPlayerPage.audioFileNo}")){
-
-        pageManager.setAsset("${widget.book.title}_${AudioPlayerPage.audioFileNo}");
-      }else{
-        pageManager.setUrl(widget.book.audio[ AudioPlayerPage.audioFileNo]);
-      }
-
-
-    }else{
-      AudioPlayerPage.audioFileNo = 0;
-      pageManager.setBook(widget.book);
-    }
+    // if(AudioPlayerPage.audioFileNo != -1 ){
+    //
+    //   if(downloaded("${widget.book.title}_${AudioPlayerPage.audioFileNo}")){
+    //
+    //     pageManager.setAsset("${widget.book.title}_${AudioPlayerPage.audioFileNo}");
+    //   }else{
+    //     pageManager.setUrl(widget.book.audio[ AudioPlayerPage.audioFileNo]);
+    //   }
+    // }else{
+    //   AudioPlayerPage.audioFileNo = 0;
+    //   pageManager.setBook(widget.book);
+    // }
     pageManager.audioFileNum = AudioPlayerPage.audioFileNo;
     pageManager.setBook(widget.book);
     if(widget.saved) {
@@ -85,8 +84,10 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   }
 
   @override
-  void dispose(){
-
+  void dispose() {
+    widget.book.position[AudioPlayerPage.audioFileNo] = AudioPlayerPage.currentPosition.toString();
+    Hive.box<Book>("temp").put(widget.book.getBookName() + widget.book.id, widget.book);
+    Hive.box<Book>("Lib").put(widget.book.getBookName() + widget.book.id, widget.book);
     super.dispose();
   }
 
@@ -107,8 +108,8 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
     return WillPopScope(
       onWillPop: () async {
-         widget.updateBookDetail();
-        Navigator.of(context).pop();
+        await widget.updateBookDetail();
+
         return true;
       },
       child: Scaffold(
@@ -203,7 +204,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                           },
                           icon:const Icon(Icons.fast_rewind_rounded,),
                         ),
-                        const PlayButton(),
+                         PlayButton(book: widget.book,),
                         IconButton(
                           iconSize: 50,
                           color: Colors.white,
@@ -283,16 +284,7 @@ class AudioProgressBar extends StatelessWidget {
       builder: (_, value, __) {
 
 
-        if(value.current == Duration(hours: value.total.inHours , minutes: value.total.inMinutes , seconds: value.total.inSeconds)){
-           if(book.audio.length > AudioPlayerPage.audioFileNo) AudioPlayerPage.audioFileNo++;
-
-             book.position[AudioPlayerPage.audioFileNo] = value.total.toString();
-
-        }else{
-          book.position[AudioPlayerPage.audioFileNo] = value.current.toString();
-        }
-        Hive.box<Book>("Lib").put(book.getBookName() + book.id, book);
-
+          AudioPlayerPage.currentPosition = value.current;
 
         return ProgressBar(
           timeLabelTextStyle: const TextStyle(color: Colors.white),
@@ -304,7 +296,14 @@ class AudioProgressBar extends StatelessWidget {
           progress: value.current,
           buffered: value.buffered,
           total: value.total,
-          onSeek: audioHandler.seek,
+          onSeek: (dur){
+            audioHandler.seek(dur);
+            AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo] = dur.toString();
+            },
+          onDragEnd: () {
+            AudioPlayerPage.currentPosition = value.current;
+          },
+
         );
       },
     );
@@ -313,7 +312,8 @@ class AudioProgressBar extends StatelessWidget {
 
 
 class PlayButton extends StatelessWidget {
-  const PlayButton({Key? key}) : super(key: key);
+  final Book book;
+  const PlayButton({Key? key,required this.book}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ButtonState>(
@@ -354,8 +354,14 @@ class PlayButton extends StatelessWidget {
               icon: const Icon(Icons.pause_circle_rounded),
               splashRadius: 20,
               iconSize: 70,
-              onPressed: audioHandler.pause,
-            );
+              onPressed: () async {
+
+                book.position[AudioPlayerPage.audioFileNo] = AudioPlayerPage.currentPosition.toString();
+                await Hive.box<Book>("temp").put(book.getBookName() + book.id, book);
+                await Hive.box<Book>("Lib").put(book.getBookName() + book.id, book);
+                 audioHandler.pause();
+              }
+          );
         }
       },
     );

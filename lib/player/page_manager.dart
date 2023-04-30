@@ -21,28 +21,26 @@ class PageManager {
   final isLastSongNotifier = ValueNotifier<bool>(true);
   final isShuffleModeEnabledNotifier = ValueNotifier<bool>(false);
 
-  late AudioPlayer _audioPlayer;
-  late ConcatenatingAudioSource _playlist;
+  // late AudioPlayer _audioPlayer;
+  // late ConcatenatingAudioSource _playlist;
   int audioFileNum = 0;
   Book book;
 
   PageManager(this.book) {
     init();
   }
-  void setSpeed(double speed){
-    _audioPlayer.setSpeed(speed);
-
-  }
+  // void setSpeed(double speed){
+  //   _audioPlayer.setSpeed(speed);
+  //
+  // }
   void init() async {
-    _audioPlayer = AudioPlayer();
+    // _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
     // _loadPlaylist();
     _listenToPlaybackState();
     _listenToCurrentPosition();
-    _listenForChangesInPlayerState();
-    _listenForChangesInPlayerPosition();
-    _listenForChangesInBufferedPosition();
-    _listenForChangesInTotalDuration();
+   _listenToBufferedPosition();
+    _listenToTotalDuration();
   }
   void _listenToPlaybackState() {
     audioHandler.playbackState.listen((playbackState) {
@@ -131,70 +129,96 @@ class PageManager {
   }
 
 
-  Future<void> setUrl(String url) async {
+  // Future<void> setUrl(String url) async {
+  //
+  //     await _audioPlayer.setUrl(url);
+  //
+  //
+  // }
 
-      await _audioPlayer.setUrl(url);
 
 
-  }
-  void _listenForChangesInPlayerState() {
-    _audioPlayer.playerStateStream.listen((playerState) {
-      final isPlaying = playerState.playing;
-      final processingState = playerState.processingState;
-      if (processingState == ProcessingState.loading ||
-          processingState == ProcessingState.buffering) {
-        playButtonNotifier.value = ButtonState.loading;
-      } else if (!isPlaying) {
-        playButtonNotifier.value = ButtonState.paused;
-      } else if (processingState != ProcessingState.completed) {
-        playButtonNotifier.value = ButtonState.playing;
-      } else {
-        _audioPlayer.seek(Duration.zero);
-        _audioPlayer.pause();
-      }
-    });
-  }
 
-  void _listenForChangesInPlayerPosition() {
-    _audioPlayer.positionStream.listen((position) {
+
+  void _listenToBufferedPosition() {
+    audioHandler.playbackState.listen((playbackState) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
-        current: position,
-        buffered: oldState.buffered,
+        current: oldState.current,
+        buffered: playbackState.bufferedPosition,
         total: oldState.total,
       );
     });
   }
 
-  void _listenForChangesInBufferedPosition(){
-    _audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
-      final oldState = progressNotifier.value;
-      progressNotifier.value = ProgressBarState(
-        current: oldState.current,
-        buffered: bufferedPosition,
-        total: oldState.total,
-      );
-    });
-  }
-
-  void _listenForChangesInTotalDuration() {
-    _audioPlayer.durationStream.listen((totalDuration) {
+  void _listenToTotalDuration() {
+    audioHandler.mediaItem.listen((mediaItem) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
         current: oldState.current,
         buffered: oldState.buffered,
-        total: totalDuration ?? Duration.zero,
+        total: mediaItem?.duration ?? Duration.zero,
       );
     });
   }
+  // void _listenForChangesInPlayerState() {
+  //   _audioPlayer.playerStateStream.listen((playerState) {
+  //     final isPlaying = playerState.playing;
+  //     final processingState = playerState.processingState;
+  //     if (processingState == ProcessingState.loading ||
+  //         processingState == ProcessingState.buffering) {
+  //       playButtonNotifier.value = ButtonState.loading;
+  //     } else if (!isPlaying) {
+  //       playButtonNotifier.value = ButtonState.paused;
+  //     } else if (processingState != ProcessingState.completed) {
+  //       playButtonNotifier.value = ButtonState.playing;
+  //     } else {
+  //       _audioPlayer.seek(Duration.zero);
+  //       _audioPlayer.pause();
+  //     }
+  //   });
+  // }
+
+  // void _listenForChangesInPlayerPosition() {
+  //   _audioPlayer.positionStream.listen((position) {
+  //     final oldState = progressNotifier.value;
+  //     progressNotifier.value = ProgressBarState(
+  //       current: position,
+  //       buffered: oldState.buffered,
+  //       total: oldState.total,
+  //     );
+  //   });
+  // }
+  //
+  // void _listenForChangesInBufferedPosition(){
+  //   _audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
+  //     final oldState = progressNotifier.value;
+  //     progressNotifier.value = ProgressBarState(
+  //       current: oldState.current,
+  //       buffered: bufferedPosition,
+  //       total: oldState.total,
+  //     );
+  //   });
+  // }
+  //
+  // void _listenForChangesInTotalDuration() {
+  //   _audioPlayer.durationStream.listen((totalDuration) {
+  //     final oldState = progressNotifier.value;
+  //     progressNotifier.value = ProgressBarState(
+  //       current: oldState.current,
+  //       buffered: oldState.buffered,
+  //       total: totalDuration ?? Duration.zero,
+  //     );
+  //   });
+  // }
 
   void setBook(Book book) async {
    this.book = book;
    _setInitialPlaylist();
   }
-   Future<String> duration() async {
-    return _audioPlayer.duration.toString();
-  }
+  //  Future<String> duration() async {
+  //   return _audioPlayer.duration.toString();
+  // }
 
   // void play() async {
   //     audioHandler.play();
@@ -210,23 +234,23 @@ class PageManager {
   //   _audioPlayer.seek(position);
   // }
 
-  void dispose() {
-    _audioPlayer.dispose();
-  }
-
-
-  void onPreviousSongButtonPressed() {
-    _audioPlayer.seekToPrevious();
-  }
-
-  void onNextSongButtonPressed() {
-    _audioPlayer.seekToNext();
-  }
-
-  void setAsset(String s) {
-    final dir = externalDirectory;
-    final filePath = '${dir.path}/$s.mp3';
-    print(filePath);
-    _audioPlayer.setFilePath(filePath);
-  }
+  // void dispose() {
+  //   _audioPlayer.dispose();
+  // }
+  //
+  //
+  // void onPreviousSongButtonPressed() {
+  //   _audioPlayer.seekToPrevious();
+  // }
+  //
+  // void onNextSongButtonPressed() {
+  //   _audioPlayer.seekToNext();
+  // }
+  //
+  // void setAsset(String s) {
+  //   final dir = externalDirectory;
+  //   final filePath = '${dir.path}/$s.mp3';
+  //   print(filePath);
+  //   _audioPlayer.setFilePath(filePath);
+  // }
 }

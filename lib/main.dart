@@ -4,7 +4,10 @@ import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/page_manager.dart';
 import 'package:echo/search.dart';
 import 'package:echo/settings.dart';
+import 'package:echo/widgets/currentlyReading.dart';
+import 'package:echo/widgets/doneReading.dart';
 import 'package:echo/widgets/libraryView.dart';
+import 'package:echo/widgets/toRead.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -43,7 +46,9 @@ Future<void> main() async {
   await Hive.openBox<Book>('Books');
   await Hive.openBox<Book>('play');
   await Hive.openBox<Book>('Lib');
-  await Hive.openBox<Book>('temp');
+  await Hive.openBox<Book>('toRead');
+  await Hive.openBox<Book>('current');
+  await Hive.openBox<Book>('done');
   await setupServiceLocator();
   runApp(const MyApp());
 
@@ -91,13 +96,13 @@ class MyApp extends StatelessWidget {
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-
+  static int state = 1;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
 
 
@@ -122,179 +127,271 @@ class _HomePageState extends State<HomePage> {
 
     getIt<PageManager>().init();
 
-
+    // controller = TabController(length: 3, vsync: this,initialIndex: HomePage.state);
+    // controller.addListener(() {
+    //   HomePage.state = controller.index;
+    // });
     super.initState();
   }
 
+
   void bigState(){
     setState(() {
-
     });
   }
-
+  @override
+  void dispose() {
+    // controller.dispose();
+    super.dispose();
+  }
   bool isPlaying = false;
-  int state = 1;
+  // late TabController controller;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-
-      bottomNavigationBar: Container(
-        height: 50,
-        child: GNav(
-          selectedIndex: 1,
-         // rippleColor: Colors.grey[800], // tab button ripple color when pressed
-         // hoverColor: Colors.grey[700], // tab button hover color
-          haptic: true, // haptic feedback
-          tabBorderRadius: 20,
-          tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
-          //tabBorder: Border.all(color: Colors.grey, width: 1), // tab button border
-          //tabShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 8)], // tab button shadow
-         // curve: Curves.easeOutExpo, // tab animation curves
-          //duration: Duration(milliseconds: 900), // tab animation duration
-          gap: 8, // the tab button gap between icon and text
-          color: Colors.grey[600], // unselected icon color
-          activeColor: Colors.purple, // selected icon and text color
-          iconSize: 25, // tab button icon size
-          tabBackgroundColor: Colors.purple.withOpacity(0.1), // selected tab background color
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          onTabChange: (index){
-            state = index;
-          },
-
-          tabs:    [
-            GButton(
-              icon: Icons.list_rounded,
-              text: 'To Read',
-              onPressed: (){
-                setState(() {
-
-                });
-              },
-
-
-            ),
-            GButton(
-              icon: Icons.chrome_reader_mode_rounded,
-              text: 'Currently reading',
-              onPressed: (){
-                setState(() {
-                });
-              },
-
-            ),
-            GButton(
-              icon: Icons.done_all_rounded,
-              text: 'Completed',
-              onPressed: (){
-                setState(() {
-
-                });
-              },
-
-            ),
-          ],
-        ),
-      ),
-
-      appBar: AppBar(
-
-        title: const Text(
-          "ECHO",
-          style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 23,
-              letterSpacing: 3
-          ),
-        ),
-
+    super.build(context);
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 1,
+      animationDuration: const Duration(milliseconds: 500),
+      child: Scaffold(
         backgroundColor: Colors.black,
 
-        actions: [
-          IconButton(onPressed: (){
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx){
-                return  Search(update: bigState);
-              })
-            );
-          },
-            icon: const Icon(
-                Icons.search_rounded ),
-            splashRadius: 20,),
+        // bottomNavigationBar: Container(
+        //   height: 50,
+        //   child: GNav(
+        //     selectedIndex: 1,
+        //    // rippleColor: Colors.grey[800], // tab button ripple color when pressed
+        //    // hoverColor: Colors.grey[700], // tab button hover color
+        //     haptic: true, // haptic feedback
+        //     tabBorderRadius: 20,
+        //     tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
+        //     //tabBorder: Border.all(color: Colors.grey, width: 1), // tab button border
+        //     //tabShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 8)], // tab button shadow
+        //    // curve: Curves.easeOutExpo, // tab animation curves
+        //     //duration: Duration(milliseconds: 900), // tab animation duration
+        //     gap: 8, // the tab button gap between icon and text
+        //     color: Colors.grey[600], // unselected icon color
+        //     activeColor: Colors.purple, // selected icon and text color
+        //     iconSize: 25, // tab button icon size
+        //     tabBackgroundColor: Colors.purple.withOpacity(0.1), // selected tab background color
+        //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //     onTabChange: (index){
+        //
+        //       setState(() {
+        //         HomePage.state = index;
+        //
+        //       });
+        //       controller.animateTo(HomePage.state);
+        //     },
+        //
+        //
+        //     tabs:     [
+        //
+        //       GButton(
+        //         icon: Icons.list_rounded,
+        //         text: 'To Read',
+        //         onPressed: (){
+        //
+        //           setState(() {
+        //
+        //             controller.animateTo(HomePage.state);
+        //
+        //           });
+        //
+        //         },
+        //
+        //
+        //       ),
+        //       GButton(
+        //         icon: Icons.chrome_reader_mode_rounded,
+        //         text: 'Currently reading',
+        //         onPressed: (){
+        //
+        //           setState(() {
+        //
+        //
+        //             controller.animateTo(HomePage.state);
+        //           });
+        //
+        //
+        //         },
+        //
+        //       ),
+        //       GButton(
+        //         icon: Icons.done_all_rounded,
+        //         text: 'Completed',
+        //         onPressed: (){
+        //
+        //           setState(() {
+        //             controller.animateTo(2);
+        //           });
+        //
+        //         },
+        //
+        //       ),
+        //     ],
+        //   ),
+        // ),
 
-          IconButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('listview', !LibraryView.listView);
-            setState((){
-              LibraryView.listView = ! LibraryView.listView;
-            });
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          height: 60,
+          child: TabBar(
 
-            },
-            icon: Icon(
-                (LibraryView.listView == true)
-                    ? Icons.grid_view_rounded
-                    : Icons.format_list_bulleted_rounded ),
-            splashRadius: 20,
+            // controller: controller,
+            // onTap: (i){
+            //   setState(() {
+            //     HomePage.state = i;
+            //   });
+            // },
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Colors.grey,
+            indicatorWeight: 0.1,
+            splashBorderRadius: BorderRadius.circular(40),
+
+
+
+            tabs: const [
+              Tab(
+                  text: "To Read",icon: Icon(Icons.list_rounded,),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   children: [
+              //     Icon(Icons.list_rounded,),
+              //     Text("To Read")
+              //   ],
+              // )
+              ),
+              Tab(text: "Currently Reading",icon: Icon(Icons.chrome_reader_mode_rounded)),
+              Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
+            ],
+          ),
+        ),
+
+
+        appBar: AppBar(
+
+          title: const Text(
+            "ECHO",
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 23,
+                letterSpacing: 3
+            ),
           ),
 
-          IconButton(
-            onPressed: (){
+          backgroundColor: Colors.black,
+
+          actions: [
+            IconButton(onPressed: (){
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx){
-                    return const Settings();
-                  })
+                MaterialPageRoute(builder: (ctx){
+                  return  Search(update: bigState);
+                })
               );
             },
-            icon: const Icon( Icons.settings_rounded),
-            splashRadius: 20,
+              icon: const Icon(
+                  Icons.search_rounded ),
+              splashRadius: 20,),
+
+            IconButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('listview', !LibraryView.listView);
+              setState((){
+                LibraryView.listView = ! LibraryView.listView;
+              });
+
+              },
+              icon: Icon(
+                  (LibraryView.listView == true)
+                      ? Icons.grid_view_rounded
+                      : Icons.format_list_bulleted_rounded ),
+              splashRadius: 20,
+            ),
+
+            IconButton(
+              onPressed: (){
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx){
+                      return const Settings();
+                    })
+                );
+              },
+              icon: const Icon( Icons.settings_rounded),
+              splashRadius: 20,
+            ),
+
+
+          ],
+        ),
+
+
+
+      body:TabBarView(
+        // controller: controller,
+
+
+        children: [
+           Padding(
+            padding: const EdgeInsets.all(10),
+            child:ToRead(),
           ),
 
+           Padding(
+            padding: const EdgeInsets.all(10),
+            child: CurrentRead(),
+          ),
 
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: DoneReading(),
+          ),
         ],
       ),
 
+        // Padding(
+        //   padding: EdgeInsets.all(10),
+        //   child: LibraryView(state: state,),
+        // ),
 
 
-    body:
-    // DefaultTabController(
-      // length: 3,
-      // child: tabs(),
 
-      Padding(
-        padding: EdgeInsets.all(10),
-        child: LibraryView(state: state,),
+
+      floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        splashColor: const Color(0x256E0097),
+        onPressed: ()  {
+          if(isPlaying){
+            audioHandler.pause();
+            setState((){
+              isPlaying = false;
+            });
+          }else{
+            var book = Hive.box<Book>('play').getAt(0);
+            var seek =book?.parseDuration(book.position[0]);
+            audioHandler.seek(seek!);
+            audioHandler.play();
+            setState((){
+              isPlaying = true;
+            });
+          }
+        },
+        backgroundColor: const Color(0xff6E0097),
+        child: PlayButton(),
       ),
 
-    // ),
-
-
-    floatingActionButton: FloatingActionButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      splashColor: const Color(0x256E0097),
-      onPressed: ()  {
-        if(isPlaying){
-          audioHandler.pause();
-          setState((){
-            isPlaying = false;
-          });
-        }else{
-          var book = Hive.box<Book>('play').getAt(0);
-          var seek =book?.parseDuration(book.position[0]);
-          audioHandler.seek(seek!);
-          audioHandler.play();
-          setState((){
-            isPlaying = true;
-          });
-        }
-      },
-      backgroundColor: const Color(0xff6E0097),
-      child: PlayButton(),
-    ),
-
+      ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+
 }
 
 class PlayButton extends StatelessWidget {
@@ -331,33 +428,25 @@ class PlayButton extends StatelessWidget {
 }
 
 Widget tabs(){
-  return TabBar(
 
-      tabs: [
+  return TabBarView(
 
-    TabBarView(
-      children: [Padding(
-        padding: EdgeInsets.all(10),
+      children: [
+        Padding(
+        padding: const EdgeInsets.all(10),
         child: LibraryView(state: 0,),
       ),
+
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: LibraryView(state: 1,),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: LibraryView(state: 2,),
+        ),
       ],
-    ),
-
-        TabBarView(
-          children: [Padding(
-            padding: EdgeInsets.all(10),
-            child: LibraryView(state: 1,),
-          ),
-          ],
-        ),
-
-        TabBarView(
-          children: [Padding(
-            padding: EdgeInsets.all(10),
-            child: LibraryView(state: 2,),
-          ),
-          ],
-        ),
-  ]);
+    );
 
 }

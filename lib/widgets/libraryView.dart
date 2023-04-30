@@ -63,7 +63,8 @@ void initState(){
 }
 
 void onDelete(int index){
-  box.delete(box.getAt(index)!.getBookName() + box.getAt(index)!.id);
+  var book = temp.getAt(index)!;
+  box.delete(book.getBookName() + book.id);
   setState((){});
 }
 
@@ -72,7 +73,7 @@ void onDelete(int index){
      bookFilter(widget.state);
 
     return  Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: (widget.state == 0) ? Colors.black : (widget.state == 1) ? Colors.white : Colors.blue,
       body: SafeArea(
           child: (LibraryView.listView == false) ?  LibraryGrid(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
