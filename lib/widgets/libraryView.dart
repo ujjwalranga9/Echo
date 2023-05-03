@@ -62,11 +62,10 @@ void initState(){
 
 }
 
-void onDelete(int index){
-  var book = temp.getAt(index)!;
-  box.delete(book.getBookName() + book.id);
-  setState((){});
-}
+  void onDelete(String title){
+    box.delete(title);
+    setState((){});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +74,7 @@ void onDelete(int index){
     return  Scaffold(
       backgroundColor: (widget.state == 0) ? Colors.black : (widget.state == 1) ? Colors.white : Colors.blue,
       body: SafeArea(
-          child: (LibraryView.listView == false) ?  LibraryGrid(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
+          child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );

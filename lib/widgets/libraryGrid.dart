@@ -9,28 +9,30 @@ import 'bookDetail.dart';
 import 'imageWidget.dart';
 
 class LibraryGrid extends StatelessWidget {
-   LibraryGrid({required this.update,required this.temp,required  this.delete,required this.filter,Key? key}) : super(key: key);
+   LibraryGrid({required this.update,required this.temp,required  this.delete,required this.filter,required this.stateOfBook,Key? key}) : super(key: key);
 
 
   Function filter;
   Function delete;
   Function update;
   Box<Book> temp;
+  int stateOfBook;
+
 
   @override
   Widget build(BuildContext context) {
-
 
     return CustomScrollView(
 
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-              height: MediaQuery.of(context).size.height*0.84,
+              height: MediaQuery.of(context).size.height*0.82,
               child: ValueListenableBuilder(
                 valueListenable: temp.listenable(),
-                builder: (context , Box<Book>box,_){
+                builder: (context , Box<Book> box,_){
                    return GridView.builder(
+                     itemCount: box.length,
                        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
                          crossAxisCount: 3,
                          crossAxisSpacing: 10,
@@ -42,9 +44,13 @@ class LibraryGrid extends StatelessWidget {
                          return  GestureDetector(
 
                             onLongPress: (){
+                              bool read = false;
+                              bool done = false;
+                              bool newBook = false;
                               showDialog(context: context, builder: (ctx)=>AlertDialog(
                                     backgroundColor: const Color(0xff202020),
                                     title:const Center(child: Text("Are you Sure?",style: TextStyle(color: Colors.white),)),
+
                                     actions: [
                                       MaterialButton(onPressed: (){
                                         Navigator.of(ctx).pop(false);
@@ -53,7 +59,7 @@ class LibraryGrid extends StatelessWidget {
                                         child: const Text("NO",style: TextStyle(color: Colors.white),),
                                       ),
                                       MaterialButton(onPressed: (){
-                                        delete(index);
+                                        delete(box.getAt(index)!.getBookName() + box.getAt(index)!.id);
                                         Navigator.of(ctx).pop(true);
                                       },
                                         color: Theme.of(context).primaryColor,
@@ -62,7 +68,50 @@ class LibraryGrid extends StatelessWidget {
 
                                     ],
 
-                                    content: const Text("Are you sure you want to delete this item?",style: TextStyle(color: Colors.white),),
+                                    content: SizedBox(
+
+                                      height: 70,
+                                      child: Column(
+                                        children: [
+                                          Row(
+
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                                            children:   [
+                                              ChoiceChip(
+                                                label:  Text("ToRead",style: TextStyle(color: (stateOfBook == 0)? Colors.white : Colors.purple ),), backgroundColor: (stateOfBook == 0)? Colors.purple : Colors.grey,
+                                                selected: newBook,onSelected: (b){
+                                                  box.getAt(index)!.newBook();
+                                                   newBook = b;
+                                                  Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                  Navigator.of(ctx).pop(true);
+                                                  update();
+                                              },),
+                                              ChoiceChip(
+                                                label:  Text("Reading",style: TextStyle(color: (stateOfBook == 1)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 1)? Colors.purple : Colors.grey,
+                                                selected: read,onSelected: (b){
+                                                    box.getAt(index)!.reading();
+                                                   read = b;
+                                                    Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                    Navigator.of(ctx).pop(true);
+                                                    update();
+                                              },),
+                                              ChoiceChip(
+                                                label:  Text("Done",style: TextStyle(color: (stateOfBook == 2)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 2)? Colors.purple : Colors.grey,
+
+                                                selected: done,onSelected: (b){
+                                                  box.getAt(index)!.done();
+                                                  done = b;
+                                                  Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                  Navigator.of(ctx).pop(true);
+                                                  update();
+                                              },),
+                                            ],
+                                          ),
+                                          const Text("Are you sure you want to delete this item?",style: TextStyle(color: Colors.white),),
+                                        ],
+                                      ),
+                                    ),
                                   ));
                             },
 
@@ -165,7 +214,7 @@ class LibraryGrid extends StatelessWidget {
                                ],
                              ));
                        } ,
-                     itemCount: box.length,
+
                    );
                 },
               )

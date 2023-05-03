@@ -25,6 +25,7 @@ late Directory directory;
 late Directory externalDirectory;
 
 bool timing = false;
+bool sortByLength = true;
 
 Future<void> main() async {
 
@@ -49,6 +50,8 @@ Future<void> main() async {
   await Hive.openBox<Book>('toRead');
   await Hive.openBox<Book>('current');
   await Hive.openBox<Book>('done');
+  final prefs = await SharedPreferences.getInstance();
+  sortByLength = prefs.getBool("SortLen")!;
   await setupServiceLocator();
   runApp(const MyApp());
 
@@ -97,6 +100,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
   static int state = 1;
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -316,7 +320,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               onPressed: (){
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (ctx){
-                      return const Settings();
+                      return Settings(fun: bigState);
                     })
                 );
               },

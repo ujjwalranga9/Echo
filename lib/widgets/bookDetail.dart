@@ -337,13 +337,13 @@ class _BookDetailState extends State<BookDetail> {
                                             },
 
                                             trailing: IconButton( onPressed: (){
-                                                print("\nDownload Started");
+                                                  print("\nDownload Started");
                                                 downloadAudioFile(widget.book.audio[index],"${widget.book.title}_$index").then((value) {
                                                   print("\nDownload Finished");
                                                   setState(() {});
                                                 });
 
-                                            },icon: Icon(  downloaded("${widget.book.title}_$index") == true ? Icons.file_download_done :Icons.file_download_outlined,color:downloaded("${widget.book.title}_$index") == true ? Theme.of(context).primaryColor : Colors.white,),
+                                            },icon: Icon(downloaded("${widget.book.title}_$index") == true ? Icons.file_download_done :Icons.file_download_outlined,color:downloaded("${widget.book.title}_$index") == true ? Theme.of(context).primaryColor : Colors.white,),
                                               splashRadius: 20,
                                             ),
 

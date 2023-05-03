@@ -86,7 +86,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   @override
   void dispose() {
     widget.book.position[AudioPlayerPage.audioFileNo] = AudioPlayerPage.currentPosition.toString();
-    Hive.box<Book>("temp").put(widget.book.getBookName() + widget.book.id, widget.book);
+
     Hive.box<Book>("Lib").put(widget.book.getBookName() + widget.book.id, widget.book);
     super.dispose();
   }
@@ -357,7 +357,7 @@ class PlayButton extends StatelessWidget {
               onPressed: () async {
 
                 book.position[AudioPlayerPage.audioFileNo] = AudioPlayerPage.currentPosition.toString();
-                await Hive.box<Book>("temp").put(book.getBookName() + book.id, book);
+
                 await Hive.box<Book>("Lib").put(book.getBookName() + book.id, book);
                  audioHandler.pause();
               }

@@ -96,6 +96,12 @@ class Book{
     return length.toString();
   }
 
+  void newBook(){
+    for(int i = 0 ; i < position.length ; i++){
+      position[i] = Duration.zero.toString();
+    }
+  }
+
   void done(){
     if(duration[0] == '0'){
       return;
@@ -113,7 +119,7 @@ class Book{
     for(int i = 0 ; i < position.length ; i++){
       position[i] = '0';
     }
-    position[0] = '1';
+    position[0] = const Duration(seconds: 1).toString();
   }
 
 

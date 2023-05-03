@@ -5,7 +5,7 @@ import '../class/book.dart';
 import 'libraryGrid.dart';
 import 'libraryList.dart';
 import 'libraryView.dart';
-
+import '../main.dart';
 class ToRead extends StatefulWidget {
   ToRead({Key? key,}) : super(key: key);
 
@@ -36,21 +36,30 @@ class _ToReadState extends State<ToRead> {
       }
 
   }
+  void sortByLen(){
+    List<Book> values = temp.values.toList();
+    values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
 
-  void onDelete(int index){
-    var book = temp.getAt(index)!;
-    box.delete(book.getBookName() + book.id);
+    for(int i = 0 ; i < values.length ; i++){
+      temp.putAt(i,values[i]);
+    }
+    print("sort Done");
+  }
+  void onDelete(String title){
+    box.delete(title);
     setState((){});
   }
 
   @override
   Widget build(BuildContext context) {
-    bookFilter();
+     bookFilter();
+     // sortByLen();
 
     return  Scaffold(
       backgroundColor: Colors.black ,
+
       body: SafeArea(
-        child: (LibraryView.listView == false) ?  LibraryGrid(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
+        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );
