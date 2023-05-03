@@ -55,7 +55,7 @@ class _DoneReadingState extends State<DoneReading> {
     return  Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 2,temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
+        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 2,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );

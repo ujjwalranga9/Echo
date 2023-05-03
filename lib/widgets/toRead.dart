@@ -41,7 +41,7 @@ class _ToReadState extends State<ToRead> {
     values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
 
     for(int i = 0 ; i < values.length ; i++){
-      temp.putAt(i,values[i]);
+        temp.putAt(i,values[i]);
     }
     print("sort Done");
   }
@@ -59,7 +59,7 @@ class _ToReadState extends State<ToRead> {
       backgroundColor: Colors.black ,
 
       body: SafeArea(
-        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
+        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );

@@ -9,10 +9,10 @@ import 'bookDetail.dart';
 import 'imageWidget.dart';
 
 class LibraryGrid extends StatelessWidget {
-   LibraryGrid({required this.update,required this.temp,required  this.delete,required this.filter,required this.stateOfBook,Key? key}) : super(key: key);
+   LibraryGrid({required this.update,required this.temp,required  this.delete,required this.stateOfBook,Key? key}) : super(key: key);
 
 
-  Function filter;
+
   Function delete;
   Function update;
   Box<Book> temp;
@@ -31,8 +31,13 @@ class LibraryGrid extends StatelessWidget {
               child: ValueListenableBuilder(
                 valueListenable: temp.listenable(),
                 builder: (context , Box<Book> box,_){
+                  List<Book> values = temp.values.toList();
+                     if(sortByLength) values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
+                     print("sort Done");
+
+
                    return GridView.builder(
-                     itemCount: box.length,
+                     itemCount: values.length,
                        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
                          crossAxisCount: 3,
                          crossAxisSpacing: 10,
@@ -59,7 +64,7 @@ class LibraryGrid extends StatelessWidget {
                                         child: const Text("NO",style: TextStyle(color: Colors.white),),
                                       ),
                                       MaterialButton(onPressed: (){
-                                        delete(box.getAt(index)!.getBookName() + box.getAt(index)!.id);
+                                        delete(values[index].getBookName() +values[index].id);
                                         Navigator.of(ctx).pop(true);
                                       },
                                         color: Theme.of(context).primaryColor,
@@ -81,18 +86,18 @@ class LibraryGrid extends StatelessWidget {
                                               ChoiceChip(
                                                 label:  Text("ToRead",style: TextStyle(color: (stateOfBook == 0)? Colors.white : Colors.purple ),), backgroundColor: (stateOfBook == 0)? Colors.purple : Colors.grey,
                                                 selected: newBook,onSelected: (b){
-                                                  box.getAt(index)!.newBook();
+                                                values[index].newBook();
                                                    newBook = b;
-                                                  Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                  Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id, values[index]);
                                                   Navigator.of(ctx).pop(true);
                                                   update();
                                               },),
                                               ChoiceChip(
                                                 label:  Text("Reading",style: TextStyle(color: (stateOfBook == 1)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 1)? Colors.purple : Colors.grey,
                                                 selected: read,onSelected: (b){
-                                                    box.getAt(index)!.reading();
+                                                values[index].reading();
                                                    read = b;
-                                                    Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                    Hive.box<Book>("Lib").put(values[index].getBookName() +values[index].id, values[index]);
                                                     Navigator.of(ctx).pop(true);
                                                     update();
                                               },),
@@ -100,9 +105,9 @@ class LibraryGrid extends StatelessWidget {
                                                 label:  Text("Done",style: TextStyle(color: (stateOfBook == 2)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 2)? Colors.purple : Colors.grey,
 
                                                 selected: done,onSelected: (b){
-                                                  box.getAt(index)!.done();
+                                                values[index].done();
                                                   done = b;
-                                                  Hive.box<Book>("Lib").put(box.getAt(index)!.getBookName() + box.getAt(index)!.id, box.getAt(index)!);
+                                                  Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id,values[index]);
                                                   Navigator.of(ctx).pop(true);
                                                   update();
                                               },),
@@ -121,7 +126,7 @@ class LibraryGrid extends StatelessWidget {
                                //   return BookDetail(book: box.getAt(index)!,);
                                // }));
 
-                               Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  BookDetail(book: box.getAt(index)!,update: update),duration: Duration(milliseconds: 300)));
+                               Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  BookDetail(book: values[index],update: update),duration: Duration(milliseconds: 300)));
 
 
                              },
@@ -133,7 +138,7 @@ class LibraryGrid extends StatelessWidget {
                                      child: Stack(
                                         alignment: Alignment.bottomRight,
                                        children: [
-                                         ImageWidget(book: box.getAt(index)!,width: 178.3,height: 265),
+                                         ImageWidget(book: values[index],width: 178.3,height: 265),
                                          Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),),
 
                                          if(timing)Padding(
@@ -145,7 +150,7 @@ class LibraryGrid extends StatelessWidget {
                                              child: Padding(
                                                padding: const EdgeInsets.only(left: 5,right: 5,bottom: 2,top: 2),
                                                child: Container(
-                                                   child: (box.getAt(index)!.duration[0] != '0') ? Text(box.getAt(index)!.bookLength().substring(0,box.getAt(index)!.bookLength().length -7),style:
+                                                   child: (values[index].duration[0] != '0') ? Text(values[index].bookLength().substring(0,values[index].bookLength().length -7),style:
                                                    const TextStyle(color: Colors.white),) : const Text("")),
                                              ),
                                            ),
@@ -198,8 +203,8 @@ class LibraryGrid extends StatelessWidget {
                                            width: 70,
                                            child:Center(
                                              child: FittedBox(
-                                             child: (box.getAt(index)!.duration[0] == '0') ?  const Text("NEW",style: TextStyle(color: Colors.white,fontSize: 12),)
-                                                 : (box.getAt(index)!.getPercentageListened() != '100%') ? Text(box.getAt(index)!.getPercentageListened(),style: const TextStyle(color: Colors.white,fontSize: 12,),) :
+                                             child: (values[index].duration[0] == '0') ?  const Text("NEW",style: TextStyle(color: Colors.white,fontSize: 12),)
+                                                 : (values[index].getPercentageListened() != '100%') ? Text(values[index].getPercentageListened(),style: const TextStyle(color: Colors.white,fontSize: 12,),) :
                                              const Text("READ",style: TextStyle(color: Colors.white,fontSize: 12),)
                                              ) ,
                                            ),

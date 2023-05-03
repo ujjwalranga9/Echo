@@ -55,7 +55,7 @@ class _CurrentReadState extends State<CurrentRead> {
     return  Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 1,temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
+        child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 1,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 
       ),
     );

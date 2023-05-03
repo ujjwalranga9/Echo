@@ -50,6 +50,7 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: ()async{
+        print("Search Updated");
         await widget.update();
         return true;
       },

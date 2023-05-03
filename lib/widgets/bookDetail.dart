@@ -66,17 +66,7 @@ class _BookDetailState extends State<BookDetail> {
     );
   }
 
-  Future<void> setLength() async {
 
-    AudioPlayer audioPlayer = AudioPlayer();
-    for(int i = 0 ; i < widget.book.audio.length ; ++i){
-       await audioPlayer.setUrl(widget.book.audio[i]);
-       widget.book.duration[i] = audioPlayer.duration.toString();
-         setState((){});
-
-    }
-    audioPlayer.dispose();
-  }
 
   Future<bool> updateState() async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -85,7 +75,9 @@ class _BookDetailState extends State<BookDetail> {
     return true;
   }
 
-
+  void refresh(){
+    setState(() {});
+  }
 
 
   bool gettingAudioLength = false;
@@ -171,7 +163,7 @@ class _BookDetailState extends State<BookDetail> {
                                             setState(()  {
                                               gettingAudioLength = true;
                                             });
-                                            await setLength().then((value) {
+                                            await setLength(widget.book,refresh).then((value) {
 
                                               var box = Hive.box<Book>("Lib");
                                               box.put(widget.book.getBookName() + widget.book.id, widget.book);
@@ -336,16 +328,7 @@ class _BookDetailState extends State<BookDetail> {
                                               ));
                                             },
 
-                                            trailing: IconButton( onPressed: (){
-                                                  print("\nDownload Started");
-                                                downloadAudioFile(widget.book.audio[index],"${widget.book.title}_$index").then((value) {
-                                                  print("\nDownload Finished");
-                                                  setState(() {});
-                                                });
-
-                                            },icon: Icon(downloaded("${widget.book.title}_$index") == true ? Icons.file_download_done :Icons.file_download_outlined,color:downloaded("${widget.book.title}_$index") == true ? Theme.of(context).primaryColor : Colors.white,),
-                                              splashRadius: 20,
-                                            ),
+                                            trailing: downloading(widget.book, index, context,refresh),
 
 
 

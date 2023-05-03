@@ -90,6 +90,9 @@ class Book{
 
   String bookLength(){
     Duration length = Duration.zero;
+    if(duration.isEmpty){
+      return "0";
+    }
     for(String i in duration){
       length += parseDuration(i);
     }
