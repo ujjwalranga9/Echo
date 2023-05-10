@@ -68,19 +68,6 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
     super.initState();
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   seekOld();
-    //   setState(() {});
-    //   print("\n\n\n\nBuild Completed");
-    // });
-
-
-    // if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
-    //   SchedulerBinding.instance.addPostFrameCallback((_) {
-    //     seekOld();
-    //     setState(() {});
-    //   });
-    // }
   }
 
   @override
@@ -94,7 +81,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
 
   void seekOld(){
-    audioHandler.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
+    pageManager.seek(widget.book.parseDuration(AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo]));
   }
 
 
@@ -196,9 +183,9 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
                             setState(() {
                               if(pageManager.progressNotifier.value.current < AudioPlayerPage.seekValue){
-                                audioHandler.seek( const Duration(seconds: 0));
+                                pageManager.seek( const Duration(seconds: 0));
                               }else{
-                                audioHandler.seek(Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -AudioPlayerPage.seekValue.inSeconds));
+                                pageManager.seek(Duration(seconds: pageManager.progressNotifier.value.current.inSeconds -AudioPlayerPage.seekValue.inSeconds));
                               }
                             });
                           },
@@ -212,9 +199,9 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                             setState(()  {
                               if(pageManager.progressNotifier.value.current >  Duration(seconds: pageManager.progressNotifier.value.total.inSeconds -AudioPlayerPage.seekValue.inSeconds)){
 
-                                audioHandler.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
+                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.total.inSeconds));
                               }else{
-                                audioHandler.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +AudioPlayerPage.seekValue.inSeconds));
+                                pageManager.seek( Duration(seconds: pageManager.progressNotifier.value.current.inSeconds +AudioPlayerPage.seekValue.inSeconds));
                               }
                             });
                           },
@@ -239,7 +226,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                                         if(speed < 0.5)return;
                                         setState((){
                                           speed -= 0.1;
-                                          audioHandler.setSpeed(speed);
+                                          pageManager.setSpeed(speed);
                                         });
                                       },child: const Text("-",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
                                       Text(speed.toStringAsFixed(1),style:const  TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
@@ -247,7 +234,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
                                         if(speed > 3.0)return;
                                         setState((){
                                           speed += 0.1;
-                                          audioHandler.setSpeed(speed);
+                                          pageManager.setSpeed(speed);
                                         });
                                       },child: const Text("+",style: TextStyle(color: Colors.white,fontSize: 20),) ,),
                                     ],
@@ -297,7 +284,7 @@ class AudioProgressBar extends StatelessWidget {
           buffered: value.buffered,
           total: value.total,
           onSeek: (dur){
-            audioHandler.seek(dur);
+            pageManager.seek(dur);
             AudioPlayerPage.oldPosition[AudioPlayerPage.audioFileNo] = dur.toString();
             },
           onDragEnd: () {
@@ -329,7 +316,7 @@ class PlayButton extends StatelessWidget {
                 icon: const Icon(Icons.play_circle_rounded),
                 splashRadius: 20,
                 iconSize: 70,
-                onPressed: audioHandler.play,
+                onPressed: pageManager.play,
               ),
                 SizedBox(
                     height: 70,
@@ -346,7 +333,7 @@ class PlayButton extends StatelessWidget {
               icon: const Icon(Icons.play_circle_rounded),
               iconSize: 70,
               splashRadius: 20,
-              onPressed: audioHandler.play,
+              onPressed: pageManager.play,
             );
           case ButtonState.playing:
             return IconButton(
@@ -359,7 +346,7 @@ class PlayButton extends StatelessWidget {
                 book.position[AudioPlayerPage.audioFileNo] = AudioPlayerPage.currentPosition.toString();
 
                 await Hive.box<Book>("Lib").put(book.getBookName() + book.id, book);
-                 audioHandler.pause();
+                 pageManager.pause();
               }
           );
         }

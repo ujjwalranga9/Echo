@@ -10,7 +10,7 @@ import 'audioService/playlist_repository.dart';
 import 'audioService/service_locator.dart';
 import 'notifier/play_button_notifier.dart';
 import 'notifier/progress_notifier.dart';
-final audioHandler = getIt<AudioHandler>();
+final _audioHandler = getIt<AudioHandler>();
 
 class PageManager {
   final currentSongTitleNotifier = ValueNotifier<String>('');
@@ -43,7 +43,7 @@ class PageManager {
     _listenToTotalDuration();
   }
   void _listenToPlaybackState() {
-    audioHandler.playbackState.listen((playbackState) {
+    _audioHandler.playbackState.listen((playbackState) {
       final isPlaying = playbackState.playing;
       final processingState = playbackState.processingState;
       if (processingState == AudioProcessingState.loading ||
@@ -54,8 +54,8 @@ class PageManager {
       } else if (processingState != AudioProcessingState.completed) {
         playButtonNotifier.value = ButtonState.playing;
       } else {
-        audioHandler.seek(Duration.zero);
-        audioHandler.pause();
+        _audioHandler.seek(Duration.zero);
+        _audioHandler.pause();
       }
     });
   }
@@ -70,7 +70,7 @@ class PageManager {
   //     extras: {'url': song['url']},
   //   ))
   //       .toList();
-  //   audioHandler.addQueueItems(mediaItems);
+  //   _audioHandler.addQueueItems(mediaItems);
   // }
   void _listenToCurrentPosition() {
     AudioService.position.listen((position) {
@@ -112,7 +112,7 @@ class PageManager {
         extras:  {'url': filePath},
         playable: true
       );
-      audioHandler.addQueueItem(mediaItem);
+      _audioHandler.addQueueItem(mediaItem);
     }else{
       print("Online");
       final mediaItem = MediaItem(
@@ -123,7 +123,7 @@ class PageManager {
         extras:  {'url': book.audio[audioFileNum]},
           playable: false
       );
-      audioHandler.addQueueItem(mediaItem);
+      _audioHandler.addQueueItem(mediaItem);
     }
 
   }
@@ -141,7 +141,7 @@ class PageManager {
 
 
   void _listenToBufferedPosition() {
-    audioHandler.playbackState.listen((playbackState) {
+    _audioHandler.playbackState.listen((playbackState) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
         current: oldState.current,
@@ -152,7 +152,7 @@ class PageManager {
   }
 
   void _listenToTotalDuration() {
-    audioHandler.mediaItem.listen((mediaItem) {
+    _audioHandler.mediaItem.listen((mediaItem) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
         current: oldState.current,
@@ -215,42 +215,47 @@ class PageManager {
   void setBook(Book book) async {
    this.book = book;
    _setInitialPlaylist();
+
   }
   //  Future<String> duration() async {
   //   return _audioPlayer.duration.toString();
   // }
 
-  // void play() async {
-  //     audioHandler.play();
-  //    // _audioPlayer.play();
-  // }
-  //
-  // void pause() {
-  //   audioHandler.pause();
-  //   // _audioPlayer.pause();
-  // }
-  //
-  // void seek(Duration position) {
-  //   _audioPlayer.seek(position);
-  // }
+  void play() async {
+      _audioHandler.play();
+     // _audioPlayer.play();
+  }
 
-  // void dispose() {
-  //   _audioPlayer.dispose();
-  // }
-  //
-  //
-  // void onPreviousSongButtonPressed() {
-  //   _audioPlayer.seekToPrevious();
-  // }
-  //
-  // void onNextSongButtonPressed() {
-  //   _audioPlayer.seekToNext();
-  // }
-  //
+  void pause() {
+    _audioHandler.pause();
+    // _audioPlayer.pause();
+  }
+
+  void seek(Duration position) {
+    _audioHandler.seek(position);
+  }
+
+  void dispose() {
+    // _audioHandler.dispose();
+  }
+
+
+  void onPreviousSongButtonPressed() {
+    _audioHandler.skipToPrevious();
+  }
+
+  void onNextSongButtonPressed() {
+     _audioHandler.skipToNext();
+  }
+
+  void setSpeed(double speed) {
+    _audioHandler.setSpeed(speed);
+  }
+
   // void setAsset(String s) {
   //   final dir = externalDirectory;
   //   final filePath = '${dir.path}/$s.mp3';
   //   print(filePath);
-  //   _audioPlayer.setFilePath(filePath);
+  //   // _audioPlayer.setFilePath(filePath);
   // }
 }

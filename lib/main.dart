@@ -14,6 +14,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'cal.dart';
 import 'class/book.dart';
 import 'loading.dart';
 import 'package:audio_service/audio_service.dart';
@@ -291,6 +292,18 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           actions: [
             IconButton(onPressed: (){
               Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx){
+                    return  Calender(update: bigState);
+                  })
+              );
+            },
+              icon: const Icon(
+                  Icons.edit_calendar_rounded),
+              splashRadius: 20,),
+
+
+            IconButton(onPressed: (){
+              Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx){
                   return  Search(update: bigState);
                 })
@@ -369,15 +382,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         splashColor: const Color(0x256E0097),
         onPressed: ()  {
           if(isPlaying){
-            audioHandler.pause();
+            pageManager.pause();
             setState((){
               isPlaying = false;
             });
           }else{
             var book = Hive.box<Book>('play').getAt(0);
             var seek =book?.parseDuration(book.position[0]);
-            audioHandler.seek(seek!);
-            audioHandler.play();
+            pageManager.seek(seek!);
+            pageManager.play();
             setState((){
               isPlaying = true;
             });
@@ -410,20 +423,20 @@ class PlayButton extends StatelessWidget {
             return IconButton(
                   color: Colors.white,splashRadius: 20,
                   icon: const Icon(Icons.play_arrow_rounded),
-                  onPressed: audioHandler.play,
+                  onPressed: pageManager.play,
             );
           case ButtonState.paused:
             return IconButton(
               color: Colors.white,splashRadius: 20,
               icon: const Icon(Icons.play_arrow_rounded),
 
-              onPressed: audioHandler.play,
+              onPressed: pageManager.play,
             );
           case ButtonState.playing:
             return IconButton(
               color: Colors.white,splashRadius: 20,
               icon: const Icon(Icons.pause_rounded),
-              onPressed: audioHandler.pause,
+              onPressed: pageManager.pause,
             );
         }
       },
