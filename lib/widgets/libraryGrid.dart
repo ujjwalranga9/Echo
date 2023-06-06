@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../class/book.dart';
 import '../main.dart';
-import 'bookDetail.dart';
+import '../screens/bookDetails/book_details.dart';
 import 'imageWidget.dart';
 
 class LibraryGrid extends StatelessWidget {
@@ -27,7 +25,7 @@ class LibraryGrid extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-              height: MediaQuery.of(context).size.height*0.82,
+              height: MediaQuery.of(context).size.height*0.9,
               child: ValueListenableBuilder(
                 valueListenable: temp.listenable(),
                 builder: (context , Box<Book> box,_){
@@ -122,11 +120,11 @@ class LibraryGrid extends StatelessWidget {
 
                              onTap: (){
 
-                               // Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
-                               //   return BookDetail(book: box.getAt(index)!,);
-                               // }));
+                               Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                                 return BookDetails(book: box.getAt(index)!,);
+                               }));
 
-                               Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  BookDetail(book: values[index],update: update),duration: Duration(milliseconds: 300)));
+                               // Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  BookDetail(book: values[index],update: update),duration: Duration(milliseconds: 300)));
 
 
                              },
@@ -139,7 +137,7 @@ class LibraryGrid extends StatelessWidget {
                                         alignment: Alignment.bottomRight,
                                        children: [
                                          ImageWidget(book: values[index],width: 178.3,height: 265),
-                                         Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),),
+                                         // Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),),
 
                                          if(timing)Padding(
                                            padding: const EdgeInsets.only(bottom: 1,right: 1),

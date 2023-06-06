@@ -2,7 +2,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../audioPlayerPage.dart';
-import '../../class/book.dart';
 import '../../main.dart';
 
 Future<AudioHandler> initAudioService() async {

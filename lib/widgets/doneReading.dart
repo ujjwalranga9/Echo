@@ -5,7 +5,6 @@ import '../class/book.dart';
 import 'libraryGrid.dart';
 import 'libraryList.dart';
 import 'libraryView.dart';
-import '../main.dart';
 class DoneReading extends StatefulWidget {
   const DoneReading({Key? key,}) : super(key: key);
 
@@ -53,7 +52,7 @@ class _DoneReadingState extends State<DoneReading> {
     bookFilter();
 
     return  Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 2,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
 

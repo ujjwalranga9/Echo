@@ -562,6 +562,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
+  progress_indicator:
+    dependency: "direct main"
+    description:
+      name: progress_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   pub_semver:
     dependency: transitive
     description:
@@ -748,7 +755,7 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "21.2.3"
+    version: "21.2.8"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:

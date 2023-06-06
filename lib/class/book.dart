@@ -24,13 +24,34 @@ class Book{
   List<String> position = [];
 
   @HiveField(6)
-  Map<String,Map<double,double>> bookMarks = {};
+  Map<String,String> bookMarks = {};
 
   @HiveField(7)
   List<String> duration = [];
 
-  String _bookName = '';
-  String _bookAuthor = '';
+  @HiveField(8)
+  String? bookName;
+
+  @HiveField(9)
+  String? bookAuthor;
+
+  @HiveField(10)
+  String? total;
+
+  @HiveField(11)
+  String? listened;
+
+  @HiveField(12)
+  int? status;
+
+  @HiveField(13)
+  String? startDate;
+
+  @HiveField(14)
+  String? finishDate;
+
+  @HiveField(15)
+  bool? fav;
 
 
   Book({
@@ -43,13 +64,13 @@ class Book{
 
   void setTitleAndAuthor(){
     if(title.contains('–')) {
-      _bookAuthor =
+      bookAuthor =
           title.substring(0, title.indexOf('–'));
-      _bookName = title.substring(
+      bookName = title.substring(
           title.indexOf('–') + 2, title.length - 9);
     }else{
-      _bookName = title;
-      _bookAuthor = '  ';
+      bookName = title;
+      bookAuthor = '  ';
     }
   }
 
@@ -58,17 +79,20 @@ class Book{
     return imageUrl!;
   }
   String getBookName(){
-    if(_bookName != '') return _bookName;
+    if(bookName != null) return bookName!;
     setTitleAndAuthor();
-    return _bookName;
+    return bookName!;
   }
   String getAuthor(){
-    if(_bookAuthor != '') return _bookAuthor;
+    if(bookAuthor != null) return bookAuthor!;
     setTitleAndAuthor();
-    return _bookAuthor;
+    return bookAuthor!;
   }
   String getStory(){
     if(story == null) return ' ';
+    story = story!.replaceAll('<p>', '');
+    story = story!.replaceAll('</p>', '');
+
     return story!;
   }
 
@@ -141,6 +165,40 @@ class Book{
     return "${percentage.ceil()}%";
 
 
+  }
+
+  Duration getLeft(){
+    Duration left = Duration.zero;
+
+    Duration length = Duration.zero;
+    for(String i in duration){
+      length += parseDuration(i);
+    }
+    Duration listen = Duration.zero;
+    for(String i in position){
+      listen += parseDuration(i);
+    }
+    return (length-listen);
+  }
+
+  double getPercentageListenedDouble(){
+
+    Duration length = Duration.zero;
+    for(String i in duration){
+      length += parseDuration(i);
+    }
+    Duration listen = Duration.zero;
+    for(String i in position){
+      listen += parseDuration(i);
+    }
+
+    final double percentage = (listen.inMilliseconds/length.inMilliseconds) * 100 ;
+    if(percentage == double.nan){
+      return 0.0;
+    }else if(percentage == double.infinity){
+      return 0.0;
+    }
+    return percentage;
   }
   double getListenedIndexLength(int index){
     double x = 0.0;

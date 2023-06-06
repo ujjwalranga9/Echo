@@ -5,9 +5,8 @@ import '../class/book.dart';
 import 'libraryGrid.dart';
 import 'libraryList.dart';
 import 'libraryView.dart';
-import '../main.dart';
 class ToRead extends StatefulWidget {
-  ToRead({Key? key,}) : super(key: key);
+  const ToRead({Key? key,}) : super(key: key);
 
 
   @override
@@ -56,7 +55,7 @@ class _ToReadState extends State<ToRead> {
      // sortByLen();
 
     return  Scaffold(
-      backgroundColor: Colors.black ,
+       backgroundColor: Colors.white ,
 
       body: SafeArea(
         child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),

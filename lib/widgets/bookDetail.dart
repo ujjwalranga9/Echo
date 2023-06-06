@@ -6,7 +6,6 @@ import 'package:echo/services/download.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:html/parser.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:page_transition/page_transition.dart';
 import '../audioPlayerPage.dart';
 import '../class/book.dart';
@@ -287,7 +286,7 @@ class _BookDetailState extends State<BookDetail> {
 
                                               Navigator.push(
                                                   context,
-                                                  PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,),duration: Duration(milliseconds: 300))
+                                                  PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,),duration: const Duration(milliseconds: 300))
                                               ).then((value) {
                                                 setState(() {
                                                   print("Updated");

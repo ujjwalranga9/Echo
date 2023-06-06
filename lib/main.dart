@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:echo/Theme/darkTheme.dart';
+import 'package:echo/Theme/lightTheme.dart';
 import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/page_manager.dart';
+import 'package:echo/screens/library/library.dart';
 import 'package:echo/search.dart';
 import 'package:echo/settings.dart';
 import 'package:echo/widgets/currentlyReading.dart';
@@ -9,15 +12,12 @@ import 'package:echo/widgets/doneReading.dart';
 import 'package:echo/widgets/libraryView.dart';
 import 'package:echo/widgets/toRead.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cal.dart';
 import 'class/book.dart';
 import 'loading.dart';
-import 'package:audio_service/audio_service.dart';
 
 
 late PageManager pageManager;
@@ -69,21 +69,23 @@ class MyApp extends StatelessWidget {
 
       title: 'ECHO',
 
-      theme: ThemeData(
-
-
-
-        appBarTheme: const AppBarTheme(
-
-          systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.black,
-              statusBarIconBrightness: Brightness.light
-          ),
-        ),
-
-        primarySwatch: Colors.purple,
-
-      ),
+      theme: lightTheme(),
+      darkTheme: darkTheme(),
+      // theme: ThemeData(
+      //
+      //
+      //
+      //   appBarTheme: const AppBarTheme(
+      //
+      //     systemOverlayStyle: SystemUiOverlayStyle(
+      //         statusBarColor: Colors.black,
+      //         statusBarIconBrightness: Brightness.light
+      //     ),
+      //   ),
+      //
+      //   primarySwatch: Colors.purple,
+      //
+      // ),
 
       initialRoute: '/',
       routes: {
@@ -113,6 +115,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   @override
   void initState(){
+
+
+    // var bo =  Hive.box<Book>('Lib');
+    //
+    // for(int i = 0 ;  i < bo.length ; i++){
+    //   print('${bo.getAt(i)!.duration.length}     ${bo.getAt(i)!.getBookName()}   ${bo.getAt(i)!.getAuthor()}     index: $i');
+    //
+    // }
+
 
     var box =  Hive.box<Book>('play');
     if(box.isNotEmpty){
@@ -160,7 +171,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       initialIndex: 1,
       animationDuration: const Duration(milliseconds: 500),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
 
         // bottomNavigationBar: Container(
         //   height: 50,
@@ -240,40 +251,46 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         //   ),
         // ),
 
+        
+
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-          height: 60,
-          child: TabBar(
 
-            // controller: controller,
-            // onTap: (i){
-            //   setState(() {
-            //     HomePage.state = i;
-            //   });
-            // },
-            labelColor: Theme.of(context).primaryColor,
-            unselectedLabelColor: Colors.grey,
-            indicatorWeight: 0.1,
-            splashBorderRadius: BorderRadius.circular(40),
+          padding: const EdgeInsets.only(left: 30,right: 30,bottom: 10),
+          child: Container(
+
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
+                color: Colors.white
+            ),
+            height: 80,
+            child: TabBar(
+
+              labelColor: Theme.of(context).primaryColor,
+              unselectedLabelColor: Colors.grey,
+              indicatorWeight: 0.1,
+              splashBorderRadius: BorderRadius.circular(40),
 
 
 
-            tabs: const [
-              Tab(
-                  text: "To Read",icon: Icon(Icons.list_rounded,),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //   children: [
-              //     Icon(Icons.list_rounded,),
-              //     Text("To Read")
-              //   ],
-              // )
-              ),
-              Tab(text: "Currently Reading",icon: Icon(Icons.chrome_reader_mode_rounded)),
-              Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
-            ],
+              // tabs: const [
+              //   Tab(text: "To Listen",icon: Icon(Icons.list_rounded,),),
+              //   Tab(text: "Listening",icon: Icon(Icons.chrome_reader_mode_rounded)),
+              //   Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
+              // ],
+
+              tabs: const [
+                Tab(icon: Icon(Icons.list_rounded,),),
+                Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
+                Tab(icon: Icon(Icons.done_all_rounded),)
+              ],
+
+            ),
           ),
         ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+
 
 
         appBar: AppBar(
@@ -287,18 +304,18 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
             ),
           ),
 
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.blue.shade50,
 
           actions: [
             IconButton(onPressed: (){
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx){
-                    return  Calender(update: bigState);
+                    return  Lib();
                   })
               );
             },
               icon: const Icon(
-                  Icons.edit_calendar_rounded),
+                  Icons.library_books),
               splashRadius: 20,),
 
 
@@ -347,23 +364,23 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
 
-      body:TabBarView(
+      body:const TabBarView(
         // controller: controller,
 
 
         children: [
            Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             child:ToRead(),
           ),
 
            Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             child: CurrentRead(),
           ),
 
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             child: DoneReading(),
           ),
         ],
@@ -377,28 +394,28 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
 
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        splashColor: const Color(0x256E0097),
-        onPressed: ()  {
-          if(isPlaying){
-            pageManager.pause();
-            setState((){
-              isPlaying = false;
-            });
-          }else{
-            var book = Hive.box<Book>('play').getAt(0);
-            var seek =book?.parseDuration(book.position[0]);
-            pageManager.seek(seek!);
-            pageManager.play();
-            setState((){
-              isPlaying = true;
-            });
-          }
-        },
-        backgroundColor: const Color(0xff6E0097),
-        child: PlayButton(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      //   splashColor: const Color(0x256E0097),
+      //   onPressed: ()  {
+      //     if(isPlaying){
+      //       pageManager.pause();
+      //       setState((){
+      //         isPlaying = false;
+      //       });
+      //     }else{
+      //       var book = Hive.box<Book>('play').getAt(0);
+      //       var seek =book?.parseDuration(book.position[0]);
+      //       pageManager.seek(seek!);
+      //       pageManager.play();
+      //       setState((){
+      //         isPlaying = true;
+      //       });
+      //     }
+      //   },
+      //   backgroundColor: const Color(0xff6E0097),
+      //   child: const PlayButton(),
+      // ),
 
       ),
     );

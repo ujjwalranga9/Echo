@@ -1,9 +1,6 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/notifier/progress_notifier.dart';
-import 'package:echo/player/page_manager.dart';
-import 'package:echo/services/download.dart';
 import 'package:echo/widgets/imageWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

@@ -6,7 +6,6 @@ import 'package:just_audio/just_audio.dart';
 import '../class/book.dart';
 import '../main.dart';
 
-import 'audioService/playlist_repository.dart';
 import 'audioService/service_locator.dart';
 import 'notifier/play_button_notifier.dart';
 import 'notifier/progress_notifier.dart';
@@ -98,7 +97,9 @@ class PageManager {
     //
     //       ));
     //     }).toList());
-    // await _audioPlayer.setAudioSource(_playlist);
+    // await audioPlayer.setAudioSource(_playlist);
+
+
     if(downloaded("${book.title}_$audioFileNum")){
       print("Downloaded");
       final dir = externalDirectory;

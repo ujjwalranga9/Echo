@@ -21,18 +21,25 @@ class BookAdapter extends TypeAdapter<Book> {
       title: fields[1] as String,
       imageUrl: fields[2] as String?,
       audio: (fields[4] as List).cast<String>(),
+      story: fields[3] as String?,
     )
-      ..story = fields[3] as String?
       ..position = (fields[5] as List).cast<String>()
-      ..bookMarks = (fields[6] as Map).map((dynamic k, dynamic v) =>
-          MapEntry(k as String, (v as Map).cast<double, double>()))
-      ..duration = (fields[7] as List).cast<String>();
+      ..bookMarks = (fields[6] as Map).cast<String, String>()
+      ..duration = (fields[7] as List).cast<String>()
+      ..bookName = fields[8] as String?
+      ..bookAuthor = fields[9] as String?
+      ..total = fields[10] as String?
+      ..listened = fields[11] as String?
+      ..status = fields[12] as int?
+      ..startDate = fields[13] as String?
+      ..finishDate = fields[14] as String?
+      ..fav = fields[15] as bool?;
   }
 
   @override
   void write(BinaryWriter writer, Book obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -48,7 +55,23 @@ class BookAdapter extends TypeAdapter<Book> {
       ..writeByte(6)
       ..write(obj.bookMarks)
       ..writeByte(7)
-      ..write(obj.duration);
+      ..write(obj.duration)
+      ..writeByte(8)
+      ..write(obj.bookName)
+      ..writeByte(9)
+      ..write(obj.bookAuthor)
+      ..writeByte(10)
+      ..write(obj.total)
+      ..writeByte(11)
+      ..write(obj.listened)
+      ..writeByte(12)
+      ..write(obj.status)
+      ..writeByte(13)
+      ..write(obj.startDate)
+      ..writeByte(14)
+      ..write(obj.finishDate)
+      ..writeByte(15)
+      ..write(obj.fav);
   }
 
   @override

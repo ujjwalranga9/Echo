@@ -1,8 +1,10 @@
+import 'package:echo/screens/bookDetails/book_details.dart';
+import 'package:echo/services/download.dart';
 import 'package:echo/services/getWebData.dart';
 import 'package:echo/widgets/bookDetail.dart';
-import 'package:echo/widgets/searchView.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:page_transition/page_transition.dart';
 import 'class/book.dart';
 
 class Search extends StatefulWidget {
@@ -21,7 +23,8 @@ class _SearchState extends State<Search> {
   List<Book> books= [];
 
   void getAudioLength(Book book)  {
-    for(int i = 0 ; i < book.audio.length ; ++i){
+    if(book.duration.isNotEmpty){return;}
+    for(int i = 0 ; i < book.audio.length ; i++){
      book.duration.add('0');
      book.position.add('0');
     }
@@ -34,9 +37,7 @@ class _SearchState extends State<Search> {
   }
 
   void updateSearch(){
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -64,7 +65,7 @@ class _SearchState extends State<Search> {
             icon: const Icon(Icons.arrow_back_rounded,),
           ),
 
-          backgroundColor: const Color.fromRGBO(25, 25 , 25, 1),
+          backgroundColor: Colors.blue.shade50,
 
           title: TextField(
             onSubmitted: (value) async {
@@ -89,19 +90,19 @@ class _SearchState extends State<Search> {
 
             },
 
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.black),
             controller: _textController,
             autofocus: true,
-            cursorColor: Colors.white,
+            cursorColor: Colors.black,
             decoration:const InputDecoration(
                 hintText: "Search audiobook",
-                hintStyle: TextStyle(color: Colors.white38),
+                hintStyle: TextStyle(color: Colors.grey),
                 border: InputBorder.none,
 
             ),
           ),
           actions: [
-            IconButton(icon: const Icon(Icons.close_rounded,color: Colors.white,),onPressed: (){
+            IconButton(icon: const Icon(Icons.close_rounded,color: Colors.black,),onPressed: (){
               setState((){
                  searchQuery = '';
                 _textController.clear();
@@ -109,70 +110,88 @@ class _SearchState extends State<Search> {
             }, splashRadius: 20,)
           ],
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         body: (_showCircle == true ) ? const Center(
-          child: CircularProgressIndicator(color: Color(0xff6E0097)),
+          child: CircularProgressIndicator(color: Colors.blue),
           ) :
               ListView.builder(itemCount: books.length,itemBuilder: (ctx,index){
 
                 return Padding(
                   padding: const EdgeInsets.only(left: 15,right: 15,top: 10,),
                   child: Container(
+                    height: 100,
                     decoration: BoxDecoration(
-                        color:const Color.fromRGBO(15, 15 , 15, 1),
-                      borderRadius: BorderRadius.circular(10)
+                        color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20)
                     ),
 
 
-                    child: ListTile(
-                      onTap: (){
-                        getAudioLength((books[index]));
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) {
-                              return BookDetail(
-                                book: books[index],
-                                update: updateSearch,
-                              );
-                            })
-                        );
-                      },
+                    child: Center(
+                      child: ListTile(
+                        onTap: (){
+                          // getAudioLength((books[index]));
 
-                      trailing: MaterialButton(
-                        shape: !(box.containsKey(books[index].getBookName() + books[index].id) ) ? ShapeBorder.lerp(
-                            Border.all(width: 1,),
-                            Border.all(width: 1), 0) : ShapeBorder.lerp(
-                            Border.all(width: 1,color: Colors.white38),
-                            Border.all(width: 1), 0),
-                        color: !(box.containsKey(books[index].getBookName() + books[index].id) ) ? const Color(0xff6E0097) :Colors.white10 ,
-                        textColor: Colors.white,
-                        onPressed: (){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Done'),duration: Duration(seconds: 1),backgroundColor: Color(0xff202020),),
-                          );
-                          setState((){
-                            if(box.containsKey(books[index].getBookName() + books[index].id)){
-                              box.delete(books[index].getBookName() +books[index].id);
-                            }else {
-                              getAudioLength((books[index]));
-                              box.put(books[index].getBookName() + books[index].id,books[index]);
-                            }
-                          });
+                          // Navigator.of(context).push(
+                          //     MaterialPageRoute(builder: (_) {
+                          //       return BookDetail(
+                          //         book: books[index],
+                          //         update: updateSearch,
+                          //       );
+                          //     })
+                          // );
+
+                          // Navigator.push(
+                          //     context,
+                          //     PageTransition(
+                          //         type: PageTransitionType.fade,
+                          //         child:  BookDetails(book: books[index]),
+                          //         duration: const Duration(milliseconds: 300)
+                          //     )
+                          // );
+
+
                         },
-                        child:  Text( !(box.containsKey(books[index].getBookName() + books[index].id) ) ? "Add to Lib" : "Remove"),
-                      ),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                            books[index].getImage(),
-                            width: 55,
-                          fit: BoxFit.cover,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            return Image.asset('audiobook.png',fit: BoxFit.cover,width: 55,);
+
+                        trailing: MaterialButton(
+                          // shape: !(box.containsKey(books[index].getBookName() + books[index].id) ) ? ShapeBorder.lerp(
+                          //     Border.all(width: 1,),
+                          //     Border.all(width: 1), 0) : ShapeBorder.lerp(
+                          //     Border.all(width: 1,color: Colors.white38),
+                          //     Border.all(width: 1), 0),
+                          color: !(box.containsKey(books[index].getBookName() + books[index].id) ) ?  Colors.indigo:Colors.grey ,
+                          textColor: Colors.white,
+                          onPressed: (){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Done'),duration: Duration(seconds: 1),backgroundColor: Color(0xff202020),),
+                            );
+                            setState((){
+                              if(box.containsKey(books[index].getBookName() + books[index].id)){
+                                box.delete(books[index].getBookName() +books[index].id);
+                              }else {
+                                getAudioLength((books[index]));
+                                setLength(books[index],(){
+
+                                });
+                                box.put(books[index].getBookName() + books[index].id,books[index]);
+                              }
+                            });
                           },
+                          child:  Text( !(box.containsKey(books[index].getBookName() + books[index].id) ) ? "Add to Lib" : " Removed "),
                         ),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                              books[index].getImage(),
+                              width: 55,
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              return Image.asset('audiobook.png',fit: BoxFit.cover,width: 55,);
+                            },
+                          ),
+                        ),
+                        title: Text(books[index].getBookName(),style: const TextStyle(color: Colors.black),),
+                        subtitle:Text(books[index].getAuthor(),style:const TextStyle(color: Colors.black),),
                       ),
-                      title: Text(books[index].getBookName(),style: const TextStyle(color: Colors.white),),
-                      subtitle:Text(books[index].getAuthor(),style:const TextStyle(color: Colors.white),),
                     ),
                   ),
                 );
