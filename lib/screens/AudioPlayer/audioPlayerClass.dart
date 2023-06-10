@@ -1,40 +1,31 @@
+
+import 'dart:async';
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:echo/player/notifier/play_button_notifier.dart';
 import 'package:echo/player/notifier/progress_notifier.dart';
 import 'package:echo/screens/AudioPlayer/playlistPage.dart';
-import 'package:echo/widgets/imageWidget.dart';
+import 'package:echo/widgets/sleepBottomSheet.dart';
+import 'package:echo/widgets/sliderDialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../class/book.dart';
+import '../../class/staticValue.dart';
 import '../../main.dart';
 import '../bookDetails/widgets/imgWidget.dart';
 
 enum ProgressState{
   idle,loading,buffering,ready,completed
 }
-//
-// Widget top(BuildContext context){
-//   return Row(children : [
-//   Padding(
-//     padding: const EdgeInsets.only(left: 25,top: 25,),
-//     child: IconButton(icon: const Icon(Icons.arrow_back_rounded),onPressed: (){
-//       Navigator.of(context).pop();
-//     },),
-//   ),
-//
-//   Padding(
-//   padding: const EdgeInsets.only(right: 25,top: 25),
-//   child: IconButton(onPressed: (){}, icon: const Icon(Icons.bookmark_border_rounded)),
-//   ),
-//   ]);
-// }
+
 
 class AudioPlayerClass extends StatefulWidget {
 
   final Book book;
-  AudioPlayerClass({Key? key, required this.book,}) : super(key: key);
+
+  const AudioPlayerClass({Key? key, required this.book,}) : super(key: key);
   @override
   State<AudioPlayerClass> createState() => _AudioPlayerClassState();
 }
@@ -42,7 +33,7 @@ class AudioPlayerClass extends StatefulWidget {
 
 class _AudioPlayerClassState extends State<AudioPlayerClass> {
 
-
+   Timer? timer;
   @override
   void initState(){
     pageManager.setBook(widget.book);
@@ -51,7 +42,29 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
 
   }
 
-  @override
+
+ void startTimer() {
+   const oneSec = Duration(seconds: 1);
+   timer = Timer.periodic(
+     oneSec,
+         (Timer timer) {
+       if (StaticValue.sleepTimer == 0) {
+
+         setState(() {
+           pageManager.pause();
+           timer.cancel();
+
+         });
+       } else {
+         setState(() {
+           StaticValue.sleepTimer--;
+         });
+       }
+     },
+   );
+ }
+
+ @override
   void dispose() {
 
 
@@ -64,6 +77,7 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
   Widget build(BuildContext context){
 
     var size = MediaQuery.of(context).size;
+
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -100,7 +114,7 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
                 icon:const Icon(Icons.fast_rewind_rounded,),
               ),
               // Expanded(child: Container(),flex: 2,),
-              PlayButton(book: widget.book,),
+              PlayButton(book: widget.book,timer: timer,startTimer: startTimer),
               // Expanded(child: Container(),flex: 2,),
               IconButton(
                 iconSize: 40,
@@ -113,8 +127,32 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
                 iconSize: 30,
                 color: Colors.grey,
                 onPressed: (){
+
+                  if(StaticValue.sleepTimer == 0) {
+                    sleepBottomSheet(context: context).then((value) {
+                      if (value != null) {
+                        StaticValue.sleepTimer = value*60;
+                      }
+                      if (kDebugMode) {
+                        print("$value min");
+                      }
+
+                      setState(() {});
+                    });
+                  }else{
+
+                    setState(() {
+                      StaticValue.sleepTimer = 0;
+                    });
+                  }
                 },
-                icon:const Icon(Icons.dark_mode_rounded,),
+                icon: Stack(
+                 alignment: Alignment.topRight,
+                  children:  [
+                    const Icon(Icons.dark_mode_rounded,),
+                    if(StaticValue.sleepTimer != 0 )  const Icon(Icons.close,size: 15),
+                  ],
+                ),
               ),
 
             ],
@@ -123,7 +161,7 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
       ),
 
       body: CustomScrollView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
 
@@ -138,20 +176,38 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
 
 
             flexibleSpace: FlexibleSpaceBar(
+
               centerTitle: true,
 
-              title: Container(
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(onPressed: (){
 
-                // color: Colors.blue,
+                    sliderDialog(context: context, min: 0.5, max: 3, value: StaticValue.speed, changeText: "Set Speed",div: 10).then((value) {
 
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(onPressed: (){}, icon: Icon(Icons.speed_rounded,color: Colors.grey,)),
-                    // IconButton(onPressed: (){}, icon: Icon(Icons.fast_rewind_outlined,color: Colors.grey,)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.timelapse,color: Colors.grey,)),
-                  ],
-                ),
+
+                      if(value != null){
+                        StaticValue.speed = value;
+                      }
+                      if (kDebugMode) {
+                        print(value);
+                      }
+                    });
+                  }, icon: const Icon(Icons.speed_rounded,color: Colors.grey,)),
+                  // IconButton(onPressed: (){}, icon: Icon(Icons.fast_rewind_outlined,color: Colors.grey,)),
+                  IconButton(onPressed: (){
+                    sliderDialog(context: context, min: 2, max: 60, value: StaticValue.skipAmount, changeText: "Skip amount",div: 58).then((value) {
+
+                      if(value != null){
+                        StaticValue.skipAmount = value;
+                      }
+                      if (kDebugMode) {
+                        print(StaticValue.skipAmount);
+                      }
+                    });
+                  }, icon: const Icon(Icons.timelapse,color: Colors.grey,)),
+                ],
               ),
 
               background: Container(
@@ -172,21 +228,45 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
                 children: [
 
                   Container(height: size.height*0.11,),
-                  imageWid(size*1.15,context,widget.book),
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      imageWid(size*1.15,context,widget.book),
+                      if(StaticValue.sleepTimer != 0) Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+
+                            height: 40,
+                            width: 90,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.black26
+                            ),
+                            child: Center(
+                                child: Text(
+
+                                  // StaticValue.sleepTimer.toString()
+                                   Duration(seconds: StaticValue.sleepTimer).toString()
+                                      .substring(0,Duration(seconds: StaticValue.sleepTimer).toString().length -7)
+                                  ,style: const TextStyle(color: Colors.white,fontSize: 16),)),
+                        ),
+                      )
+                    ],
+                  ),
                   const SizedBox(height: 16,),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10,0,10,0),
                     child: Text(
                         widget.book.getBookName(),
                         style:  TextStyle( fontSize: 25,fontWeight: FontWeight.w500,
-                            shadows: [Shadow(color: Colors.grey.shade50,offset: Offset(0, 0),blurRadius: 3)]
+                            shadows: [Shadow(color: Colors.grey.shade50,offset: const Offset(0, 0),blurRadius: 3)]
                         ),
                         maxLines: 2,
                         textAlign: TextAlign.center
                     ),
                   ),
 
-                  SizedBox(height: 1.618,),
+                  const SizedBox(height: 1.618,),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10,0,10,0),
                     child: Text(
@@ -209,8 +289,10 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
 
             leading: Padding(
               padding: const EdgeInsets.only(left: 25,top: 25),
-              child: IconButton(icon: const Icon(Icons.arrow_back_rounded),onPressed: (){
-                Navigator.of(context).pop();
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: (){
+                   Navigator.of(context).pop();
               },),
             ),
 
@@ -219,7 +301,6 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
                 padding: const EdgeInsets.only(right: 25,top: 25),
                 child: IconButton(onPressed: (){}, icon: const Icon(Icons.bookmark_border_rounded)),
               ),
-
             ],
           ),
 
@@ -357,6 +438,9 @@ class AudioProgressBar extends StatelessWidget {
       valueListenable: pageManager.progressNotifier,
       builder: (_, value, __) {
 
+
+
+
         return ProgressBar(
           timeLabelTextStyle: const TextStyle(color: Colors.black),
           timeLabelPadding: 8,
@@ -383,7 +467,9 @@ class AudioProgressBar extends StatelessWidget {
 
 class PlayButton extends StatelessWidget {
   final Book book;
-  const PlayButton({Key? key,required this.book}) : super(key: key);
+  final Timer? timer;
+  final Function startTimer;
+  const PlayButton({Key? key,required this.book,required this.timer,required this.startTimer}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ButtonState>(
@@ -423,9 +509,14 @@ class PlayButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(28)
               ),
-              onPressed: pageManager.play,
+              onPressed: (){
+                if(StaticValue.sleepTimer != 0){
+                  startTimer();
+                }
+                pageManager.play();
+                },
               color: Colors.indigo,
-              child: Icon(
+              child: const Icon(
                 color: Colors.white,
                   size: 40,
                Icons.play_arrow_rounded,
@@ -440,7 +531,9 @@ class PlayButton extends StatelessWidget {
               ),
                onPressed: () async {
 
-              // await Hive.box<Book>("Lib").put(book.getBookName() + book.id, book);
+              if(StaticValue.sleepTimer != 0){
+
+              }
               pageManager.pause();
               },
               color: Colors.indigo,

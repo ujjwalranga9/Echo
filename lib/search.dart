@@ -1,3 +1,4 @@
+import 'package:echo/screens/Search/search_view.dart';
 import 'package:echo/screens/bookDetails/book_details.dart';
 import 'package:echo/services/download.dart';
 import 'package:echo/services/getWebData.dart';
@@ -14,6 +15,13 @@ class Search extends StatefulWidget {
   State<Search> createState() => _SearchState();
 }
 
+void getAudioLength(Book book)  {
+  if(book.duration.isNotEmpty){return;}
+  for(int i = 0 ; i < book.audio.length ; i++){
+    book.duration.add('0');
+    book.position.add('0');
+  }
+}
 class _SearchState extends State<Search> {
 
   final _textController = TextEditingController();
@@ -22,13 +30,7 @@ class _SearchState extends State<Search> {
   var box;
   List<Book> books= [];
 
-  void getAudioLength(Book book)  {
-    if(book.duration.isNotEmpty){return;}
-    for(int i = 0 ; i < book.audio.length ; i++){
-     book.duration.add('0');
-     book.position.add('0');
-    }
-  }
+
 
   @override
   void initState(){
@@ -129,35 +131,22 @@ class _SearchState extends State<Search> {
                     child: Center(
                       child: ListTile(
                         onTap: (){
-                          // getAudioLength((books[index]));
 
-                          // Navigator.of(context).push(
-                          //     MaterialPageRoute(builder: (_) {
-                          //       return BookDetail(
-                          //         book: books[index],
-                          //         update: updateSearch,
-                          //       );
-                          //     })
-                          // );
 
-                          // Navigator.push(
-                          //     context,
-                          //     PageTransition(
-                          //         type: PageTransitionType.fade,
-                          //         child:  BookDetails(book: books[index]),
-                          //         duration: const Duration(milliseconds: 300)
-                          //     )
-                          // );
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child:  Search_View(book: books[index]),
+                                  duration: const Duration(milliseconds: 300)
+                              )
+                          );
 
 
                         },
 
                         trailing: MaterialButton(
-                          // shape: !(box.containsKey(books[index].getBookName() + books[index].id) ) ? ShapeBorder.lerp(
-                          //     Border.all(width: 1,),
-                          //     Border.all(width: 1), 0) : ShapeBorder.lerp(
-                          //     Border.all(width: 1,color: Colors.white38),
-                          //     Border.all(width: 1), 0),
+
                           color: !(box.containsKey(books[index].getBookName() + books[index].id) ) ?  Colors.indigo:Colors.grey ,
                           textColor: Colors.white,
                           onPressed: (){
@@ -169,12 +158,12 @@ class _SearchState extends State<Search> {
                                 box.delete(books[index].getBookName() +books[index].id);
                               }else {
                                 getAudioLength((books[index]));
-                                setLength(books[index],(){
 
-                                });
                                 box.put(books[index].getBookName() + books[index].id,books[index]);
                               }
                             });
+
+                            setLength(books[index],(){});
                           },
                           child:  Text( !(box.containsKey(books[index].getBookName() + books[index].id) ) ? "Add to Lib" : " Removed "),
                         ),

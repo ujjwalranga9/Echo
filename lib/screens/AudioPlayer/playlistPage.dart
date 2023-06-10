@@ -1,4 +1,5 @@
 
+import 'package:echo/services/download.dart';
 import 'package:flutter/material.dart';
 
 import '../../class/book.dart';
@@ -74,7 +75,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           pageManager.setBook(widget.book);
                           Navigator.of(context).pop();
                         },
-                        trailing: IconButton(icon: Icon(Icons.download_rounded),onPressed: (){},),
+                        trailing: downloading(widget.book, index, context,(){setState(() {});}),
                         title: Text('${index+1}. ${widget.book.getBookName()}'),
                         subtitle: Padding(
                           padding: const EdgeInsets.only(left: 15.0),

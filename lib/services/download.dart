@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'package:echo/main.dart';
@@ -12,12 +13,12 @@ class DownloadManager{
    static List<int> index = [];
 
 
-  static Future<File> downloadAudioFile(String url,String name,Function refresh) async {
+  static Future<File> downloadAudioFile(String url,String name,int index,Function refresh) async {
 
     final dir = externalDirectory;
-    final filePath = '${dir.path}/$name.mp3'; // replace "audio.mp3" with the desired filename
+    final filePath = '${dir.path}/$name/$index.mp3'; // replace "audio.mp3" with the desired filename
 
-    if( downloaded(name)){
+    if( downloaded(name,index)){
       return File(filePath);
     }
 
@@ -45,9 +46,9 @@ class DownloadManager{
 
 
 }
-bool downloaded(String name) {
+bool downloaded(String name,int index) {
   final dir = externalDirectory;
-  final filePath = '${dir.path}/$name.mp3';
+  final filePath = '${dir.path}/$name/$index.mp3';
   if( File(filePath).existsSync()){
     return true;
   }
@@ -66,14 +67,14 @@ Widget downloading(Book book,int index,BuildContext context,Function refresh){
       onPressed: (){
         print("\nDownload Started");
         DownloadManager.index.add(index);
-        DownloadManager.downloadAudioFile(book.audio[index],"${book.title}_$index",refresh).then((value) {
+        DownloadManager.downloadAudioFile(book.audio[index],book.title,index,refresh).then((value) {
         print("\nDownload Finished");
         DownloadManager.index.remove(index);
         refresh();
 
       });
 
-    },icon: Icon(downloaded("${book.title}_$index") == true ? Icons.file_download_done :Icons.file_download_outlined,color:downloaded("${book.title}_$index") == true ? Theme.of(context).primaryColor : Colors.white,),
+    },icon: Icon(downloaded(book.title,index) == true ? Icons.done :Icons.download_rounded,color:downloaded(book.title,index) == true ? Colors.indigo : Colors.grey.shade700,),
       splashRadius: 20,
     )
         : Padding(
@@ -83,9 +84,9 @@ Widget downloading(Book book,int index,BuildContext context,Function refresh){
             children: [
               CircularProgressIndicator(
                 value: DownloadManager.value.value,
-                color: Colors.purple,
+                color: Colors.indigo,
               ),
-              Text("${(DownloadManager.value.value*100).floor()}%",style: const TextStyle(color: Colors.white),),
+              Text("${(DownloadManager.value.value*100).floor()}%",style: const TextStyle(color: Colors.black),),
             ],
           ),
         ),
@@ -101,7 +102,7 @@ Future<void> setLength(Book book,Function refresh) async {
     await audioPlayer.setUrl(book.audio[i]);
     book.duration[i] = audioPlayer.duration.toString();
     refresh();
-
   }
+  Hive.box<Book>("Lib").put(book.getBookName() + book.id,book);
   audioPlayer.dispose();
 }

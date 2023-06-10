@@ -286,7 +286,7 @@ class _BookDetailState extends State<BookDetail> {
 
                                               Navigator.push(
                                                   context,
-                                                  PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded("${widget.book.title}_$index") == true ? true :false ,updateBookDetail: updateState,),duration: const Duration(milliseconds: 300))
+                                                  PageTransition(type: PageTransitionType.fade, child:  AudioPlayerPage(book: widget.book,saved: downloaded(widget.book.title,index) == true ? true :false ,updateBookDetail: updateState,),duration: const Duration(milliseconds: 300))
                                               ).then((value) {
                                                 setState(() {
                                                   print("Updated");
@@ -311,7 +311,7 @@ class _BookDetailState extends State<BookDetail> {
                                                   ),
                                                   MaterialButton(onPressed: (){
                                                     final dir = externalDirectory;
-                                                    final filePath = '${dir.path}/${widget.book.title}_$index.mp3';
+                                                    final filePath = '${dir.path}/${widget.book.title}/$index.mp3';
                                                     File(filePath).delete();
                                                     // box.delete(box.getAt(index)!.getBookName() + box.getAt(index)!.id);
                                                     Navigator.of(ctx).pop(true);

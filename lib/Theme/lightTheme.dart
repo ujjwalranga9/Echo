@@ -36,9 +36,14 @@ ThemeData lightTheme(){
     ),
 
 
+
     primaryColor: const Color(0xff6E0097),
     textTheme: const TextTheme(
+
+
+
         titleMedium: TextStyle(
+          fontFamily: 'calson',
             color: Colors.black
         )
     ),

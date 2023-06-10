@@ -100,7 +100,7 @@ class PageManager {
     // await audioPlayer.setAudioSource(_playlist);
 
 
-    if(downloaded("${book.title}_$audioFileNum")){
+    if(downloaded("${book.title}",audioFileNum)){
       print("Downloaded");
       final dir = externalDirectory;
       final filePath = '${dir.path}/${book.title}_$audioFileNum.mp3';
@@ -224,12 +224,12 @@ class PageManager {
 
   void play() async {
       _audioHandler.play();
-     // _audioPlayer.play();
+
   }
 
   void pause() {
     _audioHandler.pause();
-    // _audioPlayer.pause();
+
   }
 
   void seek(Duration position) {

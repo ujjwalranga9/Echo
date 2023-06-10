@@ -40,7 +40,15 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   directory = await getApplicationDocumentsDirectory();
-  externalDirectory = (await getExternalStorageDirectory())!;
+  // externalDirectory = (await getExternalStorageDirectory())!;
+  externalDirectory = Directory("/storage/emulated/0/Audiobooks");
+  bool hasExisted = await externalDirectory.exists();
+  if (!hasExisted) {
+    externalDirectory.create();
+    print(externalDirectory);
+
+  }
+
 
   Hive.init(directory.path);
   Hive.registerAdapter<Book>(BookAdapter());

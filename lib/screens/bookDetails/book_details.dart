@@ -293,7 +293,11 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                           padding: const EdgeInsets.fromLTRB(10,0,10,0),
                           child: Text(
                               book.getBookName(),
-                              style:  TextStyle( fontSize: 25,fontWeight: FontWeight.w500,
+                              style:  TextStyle(
+                                 fontFamily: 'caslon',
+
+                                  fontSize: 25,fontWeight: FontWeight.bold,
+
                                    shadows: [Shadow(color: Colors.grey.shade50,offset: Offset(0, 0),blurRadius: 3)]
                               ),
                               maxLines: 2,
@@ -306,7 +310,9 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                           padding: const EdgeInsets.fromLTRB(10,0,10,0),
                           child: Text(
                               'by ${book.getAuthor()}',
+
                               style: TextStyle(
+                                  fontFamily: 'caslon',
                                   fontSize: 15,
                                   color: Colors.grey[800]
                               ),
