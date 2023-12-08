@@ -11,7 +11,7 @@ ThemeData lightTheme(){
 
     ),
     indicatorColor: Colors.black,
-
+    accentColor: Colors.blue.shade50,
     iconTheme: const IconThemeData(
         color: Colors.black
     ),
@@ -28,7 +28,7 @@ ThemeData lightTheme(){
       ),
       // color: Colors.white,
       foregroundColor: Colors.black,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.blue.shade50,
     ),
 
     tabBarTheme: const TabBarTheme(

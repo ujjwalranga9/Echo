@@ -72,13 +72,11 @@ void initState(){
      bookFilter(widget.state);
 
     return  Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
 
       // backgroundColor: (widget.state == 0) ? Colors.black : (widget.state == 1) ? Colors.white : Colors.blue,
-      body: SafeArea(
-          child: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,update: stateChanged,) : LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
-
-      ),
+      body: (LibraryView.listView == false) ?  LibraryGrid(stateOfBook: 0,temp: temp,delete: onDelete,update: stateChanged,)
+                                            :  LibraryList(temp: temp,delete: onDelete,filter: bookFilter,update: stateChanged,),
     );
   }
 }

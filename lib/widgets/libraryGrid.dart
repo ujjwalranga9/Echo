@@ -6,7 +6,7 @@ import '../main.dart';
 import '../screens/bookDetails/book_details.dart';
 import 'imageWidget.dart';
 
-class LibraryGrid extends StatelessWidget {
+class LibraryGrid extends StatefulWidget {
    LibraryGrid({required this.update,required this.temp,required  this.delete,required this.stateOfBook,Key? key}) : super(key: key);
 
 
@@ -16,25 +16,31 @@ class LibraryGrid extends StatelessWidget {
   Box<Book> temp;
   int stateOfBook;
 
+  @override
+  State<LibraryGrid> createState() => _LibraryGridState();
+}
 
+class _LibraryGridState extends State<LibraryGrid> {
   @override
   Widget build(BuildContext context) {
 
     return CustomScrollView(
-
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(
-              height: MediaQuery.of(context).size.height*0.9,
+          child: Container(
+              color: Theme.of(context).backgroundColor,
+              height: MediaQuery.of(context).size.height*0.91,
               child: ValueListenableBuilder(
-                valueListenable: temp.listenable(),
+                valueListenable: widget.temp.listenable(),
                 builder: (context , Box<Book> box,_){
-                  List<Book> values = temp.values.toList();
-                     if(sortByLength) values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
-                     print("sort Done");
+                  List<Book> values = widget.temp.values.toList();
+                     if(sortByLength) {
+                       values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
+                       print("sort Done");
+                     }
 
 
-                   return GridView.builder(
+                   return (values.isNotEmpty) ? GridView.builder(
                      itemCount: values.length,
                        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
                          crossAxisCount: 3,
@@ -62,8 +68,9 @@ class LibraryGrid extends StatelessWidget {
                                         child: const Text("NO",style: TextStyle(color: Colors.white),),
                                       ),
                                       MaterialButton(onPressed: (){
-                                        delete(values[index].getBookName() +values[index].id);
+                                        widget.delete(values[index].getBookName() +values[index].id);
                                         Navigator.of(ctx).pop(true);
+
                                       },
                                         color: Theme.of(context).primaryColor,
                                         child:const Text("Yes",style: TextStyle(color: Colors.white),),
@@ -82,32 +89,32 @@ class LibraryGrid extends StatelessWidget {
 
                                             children:   [
                                               ChoiceChip(
-                                                label:  Text("ToRead",style: TextStyle(color: (stateOfBook == 0)? Colors.white : Colors.purple ),), backgroundColor: (stateOfBook == 0)? Colors.purple : Colors.grey,
+                                                label:  Text("ToRead",style: TextStyle(color: (widget.stateOfBook == 0)? Colors.white : Colors.purple ),), backgroundColor: (widget.stateOfBook == 0)? Colors.purple : Colors.grey,
                                                 selected: newBook,onSelected: (b){
                                                 values[index].newBook();
                                                    newBook = b;
                                                   Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id, values[index]);
                                                   Navigator.of(ctx).pop(true);
-                                                  update();
+                                                  widget.update();
                                               },),
                                               ChoiceChip(
-                                                label:  Text("Reading",style: TextStyle(color: (stateOfBook == 1)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 1)? Colors.purple : Colors.grey,
+                                                label:  Text("Reading",style: TextStyle(color: (widget.stateOfBook == 1)? Colors.white : Colors.purple ),),backgroundColor: (widget.stateOfBook == 1)? Colors.purple : Colors.grey,
                                                 selected: read,onSelected: (b){
                                                 values[index].reading();
                                                    read = b;
                                                     Hive.box<Book>("Lib").put(values[index].getBookName() +values[index].id, values[index]);
                                                     Navigator.of(ctx).pop(true);
-                                                    update();
+                                                    widget.update();
                                               },),
                                               ChoiceChip(
-                                                label:  Text("Done",style: TextStyle(color: (stateOfBook == 2)? Colors.white : Colors.purple ),),backgroundColor: (stateOfBook == 2)? Colors.purple : Colors.grey,
+                                                label:  Text("Done",style: TextStyle(color: (widget.stateOfBook == 2)? Colors.white : Colors.purple ),),backgroundColor: (widget.stateOfBook == 2)? Colors.purple : Colors.grey,
 
                                                 selected: done,onSelected: (b){
                                                 values[index].done();
                                                   done = b;
                                                   Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id,values[index]);
                                                   Navigator.of(ctx).pop(true);
-                                                  update();
+                                                  widget.update();
                                               },),
                                             ],
                                           ),
@@ -121,8 +128,12 @@ class LibraryGrid extends StatelessWidget {
                              onTap: (){
 
                                Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
-                                 return BookDetails(book: box.getAt(index)!,);
-                               }));
+                                 return BookDetails(book: values[index],);
+                               })).then((value) {
+                                 setState(() {
+
+                                 });
+                               });
 
                                // Navigator.push(context, PageTransition(type: PageTransitionType.fade, child:  BookDetail(book: values[index],update: update),duration: Duration(milliseconds: 300)));
 
@@ -187,37 +198,39 @@ class LibraryGrid extends StatelessWidget {
                                  //   ],
                                  // ),
 
-                                 Positioned(
-
-                                   top: 8,left: 75,
-
-
-                                   child: Transform.rotate(
-
-                                      angle:  0.8,
-                                       child: Container(
-                                         color: Colors.black,
-                                           height: 16,
-                                           width: 70,
-                                           child:Center(
-                                             child: FittedBox(
-                                             child: (values[index].duration[0] == '0') ?  const Text("NEW",style: TextStyle(color: Colors.white,fontSize: 12),)
-                                                 : (values[index].getPercentageListened() != '100%') ? Text(values[index].getPercentageListened(),style: const TextStyle(color: Colors.white,fontSize: 12,),) :
-                                             const Text("READ",style: TextStyle(color: Colors.white,fontSize: 12),)
-                                             ) ,
-                                           ),
-
-                                           ),
-                                       ),
-                                 ),
-
-
-
+                                 // Positioned(
+                                 //
+                                 //   top: 8,left: 75,
+                                 //
+                                 //
+                                 //   child: Transform.rotate(
+                                 //
+                                 //      angle:  0.8,
+                                 //       child: Container(
+                                 //         color: Colors.black,
+                                 //           height: 16,
+                                 //           width: 70,
+                                 //           child:Center(
+                                 //             child: FittedBox(
+                                 //             child: (values[index].duration[0] == '0') ?  const Text("NEW",style: TextStyle(color: Colors.white,fontSize: 12),)
+                                 //                 : (values[index].getPercentageListened() != '100%') ? Text(values[index].getPercentageListened(),style: const TextStyle(color: Colors.white,fontSize: 12,),) :
+                                 //             const Text("READ",style: TextStyle(color: Colors.white,fontSize: 12),)
+                                 //             ) ,
+                                 //           ),
+                                 //
+                                 //           ),
+                                 //       ),
+                                 // ),
 
                                ],
                              ));
                        } ,
 
+                   ): const Center(child:
+                   Padding(
+                     padding: EdgeInsets.only(bottom: 80),
+                     child: Text("Nothing to Show here"),
+                   ),
                    );
                 },
               )

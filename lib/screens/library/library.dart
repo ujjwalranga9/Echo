@@ -36,8 +36,6 @@ class _LibState extends State<Lib> {
       searchBook.add(box.getAt(i)!);
     }
 
-
-
     super.initState();
   }
 
@@ -142,13 +140,14 @@ class _LibState extends State<Lib> {
                if(search == '') Padding(
                  padding: const EdgeInsets.only(top: 20,),
                  child: CarouselSlider(
-                     items: [
-                       imageWid(size, context, books[Random().nextInt(books.length)]),
-                       imageWid(size, context, books[Random().nextInt(books.length)]),
-                       imageWid(size, context, books[Random().nextInt(books.length)]),
-                       imageWid(size, context, books[Random().nextInt(books.length)]),
-                       imageWid(size, context, books[Random().nextInt(books.length)]),
-                     ],
+                     // items: [
+                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
+                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
+                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
+                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
+                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
+                     // ],
+                   items: books.map((e) => imageWid(size, context,e)).toList(),
                      options: CarouselOptions(
                        height: 260,
                        enlargeCenterPage: true,

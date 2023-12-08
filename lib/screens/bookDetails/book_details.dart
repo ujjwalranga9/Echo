@@ -1,4 +1,5 @@
 
+import 'package:echo/main.dart';
 import 'package:echo/screens/AudioPlayer/audioPlayerClass.dart';
 import 'package:echo/screens/bookDetails/widgets/imgWidget.dart';
 import 'package:echo/screens/bookDetails/widgets/textUpdate.dart';
@@ -184,14 +185,18 @@ Widget getButton(Size size,BuildContext context,Book book){
           //       return AudioPlayerClass(book: book,);
           //     }));
 
-          Navigator.push(
-              context,
-              PageTransition(
+          // if(pageManager.book.bookName == book.bookName){
+          //
+          // }else {
+            Navigator.push(
+                context,
+                PageTransition(
                     type: PageTransitionType.fade,
-                    child: AudioPlayerClass(book: book,)  ,
+                    child: AudioPlayerClass(book: book,),
                     duration: const Duration(milliseconds: 350)
-              )
-          );
+                )
+            );
+          // }
         },
 
         child: Row(
@@ -199,9 +204,9 @@ Widget getButton(Size size,BuildContext context,Book book){
           children:  [
             Text(
               (book.getPercentageListened() != '0%' && book.getPercentageListened() != '100%') ? "Continue Listening" : (book.getPercentageListened() == '0%') ?  "Start Listening" : "Audiobook Completed",
-              style: TextStyle(fontSize: 20,color: Colors.white),),
+              style: const TextStyle(fontSize: 20,color: Colors.white),),
             const SizedBox(width: 10,),
-            if(book.getPercentageListened() != '100%') Icon(Icons.headphones_rounded, color: Colors.white,)
+            if(book.getPercentageListened() != '100%') const Icon(Icons.headphones_rounded, color: Colors.white,)
           ],
         ),
       ),
@@ -305,7 +310,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                           ),
                         ),
 
-                        SizedBox(height: 1.618,),
+                        const SizedBox(height: 1.618,),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10,0,10,0),
                           child: Text(
@@ -349,7 +354,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                         Hive.box<Book>("Lib").put(book.getBookName() + book.id,book);
                         update();
 
-                      }, icon: (isFav == false) ? Icon(Icons.favorite_border_rounded ) : Icon(Icons.favorite , color: Colors.indigo,)),
+                      }, icon: (isFav == false) ? const Icon(Icons.favorite_border_rounded ) : const Icon(Icons.favorite , color: Colors.indigo,)),
                     ),
 
                   ],

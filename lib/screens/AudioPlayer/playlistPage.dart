@@ -76,7 +76,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                           Navigator.of(context).pop();
                         },
                         trailing: downloading(widget.book, index, context,(){setState(() {});}),
-                        title: Text('${index+1}. ${widget.book.getBookName()}'),
+                        title: Text('${index+1}. ${widget.book.getBookName()}',style: TextStyle(color: Colors.black),),
                         subtitle: Padding(
                           padding: const EdgeInsets.only(left: 15.0),
                           child: Text("${widget.book.parseDuration(widget.book.duration[index]).inHours}h ${

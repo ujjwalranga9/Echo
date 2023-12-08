@@ -110,7 +110,16 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
               IconButton(
                 iconSize: 40,
                 color: Colors.indigo,
-                onPressed: (){},
+                onPressed: (){
+                  if(pageManager.progressNotifier.value.current.inSeconds > StaticValue.skipAmount) {
+                    pageManager.seek(Duration(
+                        seconds: pageManager.progressNotifier.value.current
+                            .inSeconds - StaticValue.skipAmount.toInt()));
+                  }else{
+                    pageManager.seek(const Duration(
+                        seconds: 0));
+                  }
+                },
                 icon:const Icon(Icons.fast_rewind_rounded,),
               ),
               // Expanded(child: Container(),flex: 2,),
@@ -119,7 +128,14 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
               IconButton(
                 iconSize: 40,
                 color: Colors.indigo,
-                onPressed: (){},
+                onPressed: (){
+                  if(pageManager.progressNotifier.value.current.inSeconds + StaticValue.skipAmount < pageManager.progressNotifier.value.total.inSeconds) {
+                    pageManager.seek(Duration(seconds:pageManager.progressNotifier.value.current.inSeconds+StaticValue.skipAmount.toInt()));
+                  }else{
+                    pageManager.seek(Duration(seconds:pageManager.progressNotifier.value.total.inSeconds));
+                  }
+
+                },
                 icon:const Icon(Icons.fast_forward_rounded),
               ),
 
@@ -189,6 +205,7 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
 
                       if(value != null){
                         StaticValue.speed = value;
+                        pageManager.setSpeed(value);
                       }
                       if (kDebugMode) {
                         print(value);

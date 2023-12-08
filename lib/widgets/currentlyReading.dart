@@ -24,6 +24,7 @@ class _CurrentReadState extends State<CurrentRead> {
 
   void bookFilter() async {
     await temp.clear();
+
     for(int i = 0 ; i < box.length ; i++){
       if(box.getAt(i)!.duration[0] != '0') {
 

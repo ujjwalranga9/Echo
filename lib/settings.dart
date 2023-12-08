@@ -33,9 +33,9 @@ class _SettingsState extends State<Settings> {
             ),
           ),
 
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.blue.shade50,
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).backgroundColor,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -43,15 +43,16 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: CheckboxListTile(
-                    tileColor: const Color(0xff202020),
+                    tileColor: Theme.of(context).errorColor,
 
-                    title: const Text("Show Audio Length",style: TextStyle(
-                      color: Colors.white,
+                    title:  Text("Show Audio Length",style: TextStyle(
+                      color: Theme.of(context).textTheme.titleMedium?.color,
                         fontWeight: FontWeight.w400,
                         fontSize: 20,
                        // letterSpacing: 3
                     ),),
                     value: timing,
+                    activeColor: Colors.black,
                     onChanged: (val) async {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setBool('timing', !timing);
@@ -65,18 +66,20 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: CheckboxListTile(
-                    tileColor: const Color(0xff202020),
+                    tileColor: Theme.of(context).errorColor,
 
-                    title: const Text("Library ListView",style: TextStyle(
-                      color: Colors.white,
+                    title:  Text("Library ListView",style: TextStyle(
+                      color: Theme.of(context).textTheme.titleMedium?.color,
                       fontWeight: FontWeight.w400,
                       fontSize: 20,
                       // letterSpacing: 3
                     ),),
+                    activeColor: Colors.black,
                     value: LibraryView.listView,
                     onChanged: (val){
                       setState((){
                         LibraryView.listView  = !LibraryView.listView;
+                        widget.fun();
                       });
                       print(LibraryView.listView);
                     },
@@ -86,10 +89,11 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: CheckboxListTile(
-                    tileColor: const Color(0xff202020),
+                    tileColor: Theme.of(context).errorColor,
+                    activeColor: Colors.black,
 
-                    title: const Text("Sort by Size",style: TextStyle(
-                      color: Colors.white,
+                    title:  Text("Sort by Size",style: TextStyle(
+                      color: Theme.of(context).textTheme.titleMedium?.color,
                       fontWeight: FontWeight.w400,
                       fontSize: 20,
                       // letterSpacing: 3
@@ -100,6 +104,7 @@ class _SettingsState extends State<Settings> {
                       await prefs.setBool('SortLen', !sortByLength);
                       setState((){
                         sortByLength  = val!;
+                        widget.fun();
                       });
                       print(sortByLength);
                     },

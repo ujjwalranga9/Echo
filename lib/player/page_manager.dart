@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:echo/services/download.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../class/book.dart';
@@ -101,7 +102,7 @@ class PageManager {
 
 
     if(downloaded("${book.title}",audioFileNum)){
-      print("Downloaded");
+     // print("Downloaded");
       final dir = externalDirectory;
       final filePath = '${dir.path}/${book.title}_$audioFileNum.mp3';
 
@@ -115,7 +116,7 @@ class PageManager {
       );
       _audioHandler.addQueueItem(mediaItem);
     }else{
-      print("Online");
+      //print("Online");
       final mediaItem = MediaItem(
         id:  book.id,
         album: book.getAuthor(),
@@ -228,6 +229,10 @@ class PageManager {
   }
 
   void pause() {
+   //  var box =  Hive.box<Book>('play');
+   // // pageManager.book.position[audioFileNum] = pageManager.progressNotifier.value.current.toString();
+   //  box.putAt(0, pageManager.book);
+
     _audioHandler.pause();
 
   }

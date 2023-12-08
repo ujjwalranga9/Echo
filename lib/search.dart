@@ -1,5 +1,8 @@
+import 'package:books_finder/books_finder.dart' as b;
+import 'package:echo/screens/Search/bookFinderUI.dart';
 import 'package:echo/screens/Search/search_view.dart';
 import 'package:echo/screens/bookDetails/book_details.dart';
+import 'package:echo/services/bookFinder.dart';
 import 'package:echo/services/download.dart';
 import 'package:echo/services/getWebData.dart';
 import 'package:echo/widgets/bookDetail.dart';
@@ -48,6 +51,7 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
   bool _showCircle = false;
+   b.BookInfo? info;
   
   @override
   Widget build(BuildContext context) {
@@ -71,6 +75,7 @@ class _SearchState extends State<Search> {
 
           title: TextField(
             onSubmitted: (value) async {
+              info =  await bookFinder(value);
               books = [];
               searchQuery = "";
               searchUrl = 'https://dailyaudiobooks.com/?s=';
@@ -87,6 +92,7 @@ class _SearchState extends State<Search> {
                // print(books);
               }));
               setState(() {
+
                 _showCircle = false;
               });
 
@@ -109,7 +115,17 @@ class _SearchState extends State<Search> {
                  searchQuery = '';
                 _textController.clear();
               });
-            }, splashRadius: 20,)
+            }, splashRadius: 20,),
+
+            // IconButton(icon: const Icon(Icons.info,color: Colors.black,),onPressed: (){
+            //
+            //     Navigator.of(context).push(MaterialPageRoute(builder: (_)=> BooksFinder(info: info!)));
+            //
+            // }, splashRadius: 20,)
+
+
+
+
           ],
         ),
         backgroundColor: Colors.white,

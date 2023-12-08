@@ -92,7 +92,8 @@ class Book{
     if(story == null) return ' ';
     story = story!.replaceAll('<p>', '');
     story = story!.replaceAll('</p>', '');
-
+    story = story!.replaceAll('<b>', '');
+    story = story!.replaceAll('</b>', '');
     return story!;
   }
 

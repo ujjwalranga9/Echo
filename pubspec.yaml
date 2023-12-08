@@ -30,6 +30,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  bloc:
+  books_finder:
   http: ^0.13.5
   html: ^0.15.0
   intl: ^0.17.0
@@ -46,8 +48,8 @@ dependencies:
   service_locator:
   page_transition: ^2.0.9
   google_nav_bar:
-  get_it: ^7.2.0
-  syncfusion_flutter_calendar:
+  get_it:
+  #syncfusion_flutter_calendar:
   calendar_agenda: ^0.0.2+3
   progress_indicator: ^0.2.2
   carousel_slider: ^4.2.1
