@@ -85,22 +85,6 @@ class PageManager {
 
   void _setInitialPlaylist() async {
 
-    // _playlist = ConcatenatingAudioSource(
-    //
-    //     children: book.audio.map((e) {
-    //
-    //       return AudioSource.uri(Uri.parse(e),
-    //           tag: MediaItem(
-    //           id: book.id,
-    //          album: book.getAuthor(),
-    //         title: book.getBookName(),
-    //         artUri: Uri.parse(book.getImage()),
-    //
-    //       ));
-    //     }).toList());
-    // await audioPlayer.setAudioSource(_playlist);
-
-
     if(downloaded("${book.title}",audioFileNum)){
      // print("Downloaded");
       final dir = externalDirectory;
