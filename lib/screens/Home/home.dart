@@ -36,7 +36,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
+    super.build(context);
+
     return DefaultTabController(
       length: 3,
       initialIndex: 1,
@@ -246,8 +247,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               icon: const Icon( Icons.settings_rounded),
               splashRadius: 20,
             ),
-
-
           ],
         ),
 
@@ -258,8 +257,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
             TabBarView(
-
-
 
               children: [
                 // Padding(

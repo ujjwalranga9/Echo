@@ -4,11 +4,8 @@ import 'package:echo/Theme/lightTheme.dart';
 import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/page_manager.dart';
 import 'package:echo/routes.dart';
-import 'package:echo/screens/Home/home.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
 import 'package:path_provider/path_provider.dart';
 import 'class/book.dart';
 import 'dart:developer' as d;
@@ -37,7 +34,6 @@ Future<void> main() async {
     d.log('Going in the Audiobooks Directory ...', name: 'main.dart');
   }
 
-
   Hive.init(directory.path);
   Hive.registerAdapter<Book>(BookAdapter());
 
@@ -47,9 +43,6 @@ Future<void> main() async {
   await Hive.openBox<Book>('toRead');
   await Hive.openBox<Book>('current');
   await Hive.openBox<Book>('done');
-
-
-
 
 
   await setupServiceLocator();
@@ -88,6 +81,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: "/",
       onGenerateRoute: _appRouter.onGenerateRoute,
       debugShowCheckedModeBanner: false,
+
 
     );
   }
