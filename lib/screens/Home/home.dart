@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import '../../class/book.dart';
 import '../../main.dart';
 import '../../player/notifier/play_button_notifier.dart';
 import '../../widgets/currentlyReading.dart';
@@ -36,6 +38,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     super.build(context);
 
     return DefaultTabController(
@@ -43,7 +46,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       initialIndex: 1,
       animationDuration: const Duration(milliseconds: 500),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).backgroundColor,
 
         // bottomNavigationBar: Container(
         //   height: 50,
@@ -279,51 +282,51 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               ],
             ),
 
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-
-              padding: const EdgeInsets.only(bottom: 15,
-                //  left: 15
-              ),
-              child: Container(
-
-                decoration: BoxDecoration(
-
-                    boxShadow: const [BoxShadow(color: Colors.black26,blurRadius: 5,offset: Offset(0,1),blurStyle: BlurStyle.inner,)],
-                    borderRadius: BorderRadius.circular(20),
-                    // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
-                    color: Theme.of(context).appBarTheme.backgroundColor
-                ),
-                height: 58,
-                width: 330,
-
-                child: TabBar(
-
-                  labelColor: Theme.of(context).primaryColor,
-                  unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.5),
-                  indicatorWeight: 0.01,
-                  splashBorderRadius: BorderRadius.circular(40),
-
-
-
-
-                  // tabs: const [
-                  //   Tab(text: "To Listen",icon: Icon(Icons.list_rounded,),),
-                  //   Tab(text: "Listening",icon: Icon(Icons.chrome_reader_mode_rounded)),
-                  //   Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
-                  // ],
-
-                  tabs: const [
-                    Tab(icon: Icon(Icons.list_rounded,),),
-                    Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
-                    Tab(icon: Icon(Icons.done_all_rounded),)
-                  ],
-
-                ),
-              ),
-            ),
+            // Container(
+            //   decoration: const BoxDecoration(
+            //     color: Colors.transparent,
+            //   ),
+            //
+            //   padding: const EdgeInsets.only(bottom: 15,
+            //     //  left: 15
+            //   ),
+            //   child: Container(
+            //
+            //     decoration: BoxDecoration(
+            //
+            //         boxShadow: const [BoxShadow(color: Colors.black26,blurRadius: 5,offset: Offset(0,1),blurStyle: BlurStyle.inner,)],
+            //         borderRadius: BorderRadius.circular(20),
+            //         // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
+            //         color: Theme.of(context).appBarTheme.backgroundColor
+            //     ),
+            //     height: 58,
+            //     width: 330,
+            //
+            //     child: TabBar(
+            //
+            //       labelColor: Theme.of(context).primaryColor,
+            //       unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.5),
+            //       indicatorWeight: 0.01,
+            //       splashBorderRadius: BorderRadius.circular(40),
+            //
+            //
+            //
+            //
+            //       // tabs: const [
+            //       //   Tab(text: "To Listen",icon: Icon(Icons.list_rounded,),),
+            //       //   Tab(text: "Listening",icon: Icon(Icons.chrome_reader_mode_rounded)),
+            //       //   Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
+            //       // ],
+            //
+            //       tabs: const [
+            //         Tab(icon: Icon(Icons.list_rounded,),),
+            //         Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
+            //         Tab(icon: Icon(Icons.done_all_rounded),)
+            //       ],
+            //
+            //     ),
+            //   ),
+            // ),
 
             // Positioned(
             //   height: 200,
@@ -373,30 +376,71 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
 
-        // floatingActionButton: FloatingActionButton(
-        //   elevation: 2,
-        //
-        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        //   splashColor: const Color(0x256E0097),
-        //   onPressed: ()  {
-        //     if(isPlaying){
-        //       pageManager.pause();
-        //       setState((){
-        //         isPlaying = false;
-        //       });
-        //     }else{
-        //       var book = Hive.box<Book>('play').getAt(0);
-        //       var seek =book?.parseDuration(book.position[0]);
-        //       pageManager.seek(seek!);
-        //       pageManager.play();
-        //       setState((){
-        //         isPlaying = true;
-        //       });
-        //     }
-        //   },
-        //   backgroundColor: const Color(0xff6E0097),
-        //   child: const PlayButton(),
-        // ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+
+              padding: const EdgeInsets.only(
+                // bottom: 15,
+                 left: 30
+              ),
+              child: Container(
+
+                decoration: BoxDecoration(
+                    boxShadow: const [BoxShadow(color: Colors.black26,blurRadius: 5,offset: Offset(0,1),blurStyle: BlurStyle.inner,)],
+                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).appBarTheme.backgroundColor
+                ),
+                height: 58,
+                width: size.width*0.7,
+
+                child: TabBar(
+
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.5),
+                  indicatorWeight: 0.01,
+                  splashBorderRadius: BorderRadius.circular(40),
+
+                  tabs: const [
+                    Tab(icon: Icon(Icons.list_rounded,),),
+                    Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
+                    Tab(icon: Icon(Icons.done_all_rounded),)
+                  ],
+
+                ),
+              ),
+            ),
+
+            FloatingActionButton(
+              elevation: 2,
+
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              splashColor: const Color(0x256E0097),
+              onPressed: ()  {
+                if(isPlaying){
+                  pageManager.pause();
+                  setState((){
+                    isPlaying = false;
+                  });
+                }else{
+                  var book = Hive.box<Book>('play').getAt(0);
+                  var seek =book?.parseDuration(book.position[0]);
+                  pageManager.seek(seek!);
+                  pageManager.play();
+                  setState((){
+                    isPlaying = true;
+                  });
+                }
+              },
+              backgroundColor: const Color(0xff6E0097),
+              child: const PlayButton(),
+            ),
+          ],
+        ),
 
       ),
     );
