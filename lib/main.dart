@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:echo/Theme/darkTheme.dart';
 import 'package:echo/Theme/lightTheme.dart';
+import 'package:echo/bloc/grid_list_cubit.dart';
 import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/page_manager.dart';
 import 'package:echo/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'class/book.dart';
@@ -72,15 +74,20 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_)=>GridListCubit()),
+      ],
+      child: MaterialApp(
 
-      title: 'ECHO',
-      theme: lightTheme(),
-      darkTheme: darkTheme(),
-      initialRoute: "/",
-      onGenerateRoute: _appRouter.onGenerateRoute,
-      debugShowCheckedModeBanner: false,
+        title: 'ECHO',
+        theme: lightTheme(),
+        darkTheme: darkTheme(),
+        initialRoute: "/",
+        onGenerateRoute: _appRouter.onGenerateRoute,
+        debugShowCheckedModeBanner: false,
 
+      ),
     );
   }
 }

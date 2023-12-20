@@ -147,7 +147,9 @@ class _LibraryGridState extends State<LibraryGrid> {
                                      child: Stack(
                                         alignment: Alignment.bottomRight,
                                        children: [
-                                         ImageWidget(book: values[index],width: 178.3,height: 265),
+                                         Hero(
+                                             tag: "image",
+                                            child: ImageWidget(book: values[index],width: 178.3,height: 265)),
                                          // Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),),
 
                                          if(timing)Padding(

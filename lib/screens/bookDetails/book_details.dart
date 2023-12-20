@@ -31,8 +31,6 @@ class _BookDetailsState extends State<BookDetails> {
   @override
   void initState() {
 
-
-
     super.initState();
   }
 
@@ -59,7 +57,8 @@ class _BookDetailsState extends State<BookDetails> {
                               }));
 
                         },
-                        child: imageWid(size,context,widget.book)),
+                        child: Hero(tag: "image",
+                        child: imageWid(size,context,widget.book))),
                   update: (){
                       setState(() {
 

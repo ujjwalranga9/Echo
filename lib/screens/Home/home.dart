@@ -1,6 +1,9 @@
 
+import 'package:echo/bloc/grid_list_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../class/book.dart';
 import '../../main.dart';
 import '../../player/notifier/play_button_notifier.dart';
@@ -214,20 +217,21 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                   Icons.search_rounded ),
               splashRadius: 20,),
 
-            // IconButton(
-            //   onPressed: () async {
-            //     final prefs = await SharedPreferences.getInstance();
-            //     await prefs.setBool('listview', !LibraryView.listView);
-            //   setState((){
-            //     LibraryView.listView = ! LibraryView.listView;
-            //   });
-            //   },
-            //   icon: Icon(
-            //       (LibraryView.listView == true)
-            //           ? Icons.grid_view_rounded
-            //           : Icons.format_list_bulleted_rounded ),
-            //   splashRadius: 20,
-            // ),
+            IconButton(
+              onPressed: () async {
+                // final prefs = await SharedPreferences.getInstance();
+                // await prefs.setBool('listview', !LibraryView.listView);
+              // setState((){
+              //   LibraryView.listView = ! LibraryView.listView;
+              // });
+                BlocProvider.of<GridListCubit>(context).toggle();
+               },
+              icon: Icon(
+                  (BlocProvider.of<GridListCubit>(context).state is GridState)
+                      ? Icons.grid_view_rounded
+                      : Icons.format_list_bulleted_rounded ),
+              splashRadius: 20,
+            ),
 
             IconButton(
               onPressed: (){
@@ -266,7 +270,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         body:Stack(
           alignment: Alignment.bottomCenter,
           children: [
-
+          //   LineChart(
+          //     LineChartData(
+          //
+          //
+          //   ),
+          //   swapAnimationDuration: Duration(milliseconds: 150), // Optional
+          //   swapAnimationCurve: Curves.linear, // Optional
+          // ),
 
             TabBarView(
 
