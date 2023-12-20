@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../class/book.dart';
 import '../../main.dart';
 import '../../player/notifier/play_button_notifier.dart';
+import '../../printer.dart';
 import '../../widgets/currentlyReading.dart';
 import '../../widgets/doneReading.dart';
 import '../../widgets/libraryView.dart';
@@ -18,12 +19,18 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
   @override
   void initState(){
     d.log('Homepage Init is called', name: 'home.dart',);
+    logE("Building");
+    // logY("Building");
+    // logB("Building");
+    // logR("Building");
+    // logC("Building");
+    // logM("Building ");
+    // logW("Building");
     super.initState();
   }
 
@@ -40,6 +47,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     super.build(context);
+
+
 
     return DefaultTabController(
       length: 3,

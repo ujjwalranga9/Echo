@@ -45,16 +45,17 @@ dependencies:
   shared_preferences: ^2.0.15
   audio_video_progress_bar: ^0.10.0
   dio:
- # service_locator:
+# service_locator:
   page_transition: ^2.0.9
   google_nav_bar:
   get_it:
-  #syncfusion_flutter_calendar:
+#syncfusion_flutter_calendar:
   calendar_agenda: ^0.0.2+3
   progress_indicator: ^0.2.2
   carousel_slider: ^4.2.1
   #flutter_audio_waveforms: ^1.2.1+8
   #flutter_draggable_gridview: ^0.0.8
+  talker_logger: ^3.1.0
 
 #google_nav_bar: ^5.0.6
 
