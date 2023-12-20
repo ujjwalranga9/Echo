@@ -23,7 +23,6 @@ Future<void> main() async {
   d.log('App started running ...', name: 'main.dart');
   WidgetsFlutterBinding.ensureInitialized();
   directory = await getApplicationDocumentsDirectory();
-  // externalDirectory = (await getExternalStorageDirectory())!;
   externalDirectory = Directory("/storage/emulated/0/Audiobooks");
   bool hasExisted = await externalDirectory.exists();
   if (!hasExisted) {
@@ -81,7 +80,6 @@ class _MyAppState extends State<MyApp> {
       initialRoute: "/",
       onGenerateRoute: _appRouter.onGenerateRoute,
       debugShowCheckedModeBanner: false,
-
 
     );
   }
