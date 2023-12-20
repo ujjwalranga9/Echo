@@ -31,6 +31,8 @@ dependencies:
     sdk: flutter
 
   bloc:
+  flutter_bloc:
+  equatable:
   books_finder:
   http: ^0.13.5
   html: ^0.15.0
