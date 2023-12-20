@@ -4,11 +4,14 @@ import 'package:echo/Theme/lightTheme.dart';
 import 'package:echo/bloc/grid_list_cubit.dart';
 import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/page_manager.dart';
+import 'package:echo/repository/localdata.dart';
 import 'package:echo/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'bloc/book_state_bloc.dart';
+import 'bloc/localRepositoryBloc.dart';
 import 'class/book.dart';
 import 'dart:developer' as d;
 
@@ -47,6 +50,7 @@ Future<void> main() async {
 
 
   await setupServiceLocator();
+  Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 
 }
@@ -73,21 +77,45 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    LocalRepository localRepository = LocalRepository();
 
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(create: (_)=>GridListCubit()),
+        RepositoryProvider<LocalRepository>(create: (_) => localRepository),
       ],
-      child: MaterialApp(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_)=>GridListCubit()),
+          BlocProvider(create: (_)=>BookStateCubit()),
+          BlocProvider(create: (_)=> LocalRepositoryBloc(localRepository)),
+        ],
+        child: MaterialApp(
 
-        title: 'ECHO',
-        theme: lightTheme(),
-        darkTheme: darkTheme(),
-        initialRoute: "/",
-        onGenerateRoute: _appRouter.onGenerateRoute,
-        debugShowCheckedModeBanner: false,
+          title: 'ECHO',
+          theme: lightTheme(),
+          darkTheme: darkTheme(),
+          initialRoute: "/",
+          onGenerateRoute: _appRouter.onGenerateRoute,
+          debugShowCheckedModeBanner: false,
 
+        ),
       ),
     );
+  }
+}
+
+
+
+class AppBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    if (bloc is Cubit) print(change);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
   }
 }

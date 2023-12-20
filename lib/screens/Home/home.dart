@@ -1,22 +1,22 @@
 
 import 'package:echo/bloc/grid_list_cubit.dart';
+import 'package:echo/screens/Home/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../bloc/book_state_bloc.dart';
 import '../../class/book.dart';
 import '../../main.dart';
 import '../../player/notifier/play_button_notifier.dart';
 import '../../printer.dart';
-import '../../widgets/currentlyReading.dart';
-import '../../widgets/doneReading.dart';
-import '../../widgets/libraryView.dart';
-import '../../widgets/toRead.dart';
+
+
 import 'dart:developer' as d;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-  static int state = 1;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,12 +28,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   void initState(){
     d.log('Homepage Init is called', name: 'home.dart',);
     logE("Building");
-    // logY("Building");
-    // logB("Building");
-    // logR("Building");
-    // logC("Building");
-    // logM("Building ");
-    // logW("Building");
     super.initState();
   }
 
@@ -60,33 +54,34 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
 
-        // bottomNavigationBar: Container(
-        //   height: 50,
+        // bottomNavigationBar: SizedBox(
+        //   height: 70,
         //   child: GNav(
         //     selectedIndex: 1,
         //    // rippleColor: Colors.grey[800], // tab button ripple color when pressed
         //    // hoverColor: Colors.grey[700], // tab button hover color
-        //     haptic: true, // haptic feedback
+        //    //  haptic: true, // haptic feedback
         //     tabBorderRadius: 20,
-        //     tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
+        //     // tabActiveBorder: Border.all(color: Colors.black, width: 1), // tab button border
         //     //tabBorder: Border.all(color: Colors.grey, width: 1), // tab button border
         //     //tabShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 8)], // tab button shadow
         //    // curve: Curves.easeOutExpo, // tab animation curves
         //     //duration: Duration(milliseconds: 900), // tab animation duration
         //     gap: 8, // the tab button gap between icon and text
         //     color: Colors.grey[600], // unselected icon color
-        //     activeColor: Colors.purple, // selected icon and text color
+        //     activeColor: Colors.black, // selected icon and text color
         //     iconSize: 25, // tab button icon size
-        //     tabBackgroundColor: Colors.purple.withOpacity(0.1), // selected tab background color
+        //     tabBackgroundColor: Colors.blue.withOpacity(0.1), // selected tab background color
         //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //     backgroundColor: Colors.blue.shade50,
         //     onTabChange: (index){
         //
         //       setState(() {
-        //         HomePage.state = index;
+        //         // HomePage.state = index;
         //
         //       });
-        //       controller.animateTo(HomePage.state);
+        //       // controller.animateTo(HomePage.state);
         //     },
         //
         //
@@ -94,12 +89,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         //
         //       GButton(
         //         icon: Icons.list_rounded,
-        //         text: 'To Read',
+        //         text: 'To Listen',
         //         onPressed: (){
         //
         //           setState(() {
-        //
-        //             controller.animateTo(HomePage.state);
+        //             // controller.animateTo(HomePage.state);
         //
         //           });
         //
@@ -109,13 +103,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         //       ),
         //       GButton(
         //         icon: Icons.chrome_reader_mode_rounded,
-        //         text: 'Currently reading',
+        //         text: 'Listening',
         //         onPressed: (){
         //
         //           setState(() {
-        //
-        //
-        //             controller.animateTo(HomePage.state);
+        //             // controller.animateTo(HomePage.state);
         //           });
         //
         //
@@ -128,7 +120,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         //         onPressed: (){
         //
         //           setState(() {
-        //             controller.animateTo(2);
+        //             // controller.animateTo(2);
         //           });
         //
         //         },
@@ -140,42 +132,43 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
 
-        // bottomNavigationBar: Container(
-        //   color: Colors.transparent,
-        //   padding: const EdgeInsets.only(left: 30,right: 30,bottom: 10),
-        //   child: Container(
-        //
-        //     decoration: BoxDecoration(
-        //         borderRadius: BorderRadius.circular(20),
-        //         // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
-        //         color: Colors.blue.shade50
-        //     ),
-        //     height: 60,
-        //
-        //     child: TabBar(
-        //
-        //       labelColor: Theme.of(context).primaryColor,
-        //       unselectedLabelColor: Colors.black45,
-        //       indicatorWeight: 0.1,
-        //       splashBorderRadius: BorderRadius.circular(40),
-        //
-        //
-        //
-        //       // tabs: const [
-        //       //   Tab(text: "To Listen",icon: Icon(Icons.list_rounded,),),
-        //       //   Tab(text: "Listening",icon: Icon(Icons.chrome_reader_mode_rounded)),
-        //       //   Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
-        //       // ],
-        //
-        //       tabs: const [
-        //         Tab(icon: Icon(Icons.list_rounded,),),
-        //         Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
-        //         Tab(icon: Icon(Icons.done_all_rounded),)
-        //       ],
-        //
-        //     ),
-        //   ),
-        // ),
+        bottomNavigationBar: Container(
+          color: Colors.transparent,
+          // padding: const EdgeInsets.only(left: 30,right: 30,bottom: 10),
+          child: Container(
+
+            decoration: BoxDecoration(
+                // borderRadius: BorderRadius.circular(20),
+                // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
+                color: Colors.blue.shade50
+            ),
+            height: 75,
+
+            child: TabBar(
+
+              labelColor: Colors.black,
+              indicatorColor: Colors.black,
+              unselectedLabelColor: Colors.black45,
+              indicatorWeight: 0.01,
+              splashBorderRadius: BorderRadius.circular(40),
+
+
+
+              // tabs: const [
+              //   Tab(text: "To Listen",icon: Icon(Icons.list_rounded,),),
+              //   Tab(text: "Listening",icon: Icon(Icons.chrome_reader_mode_rounded)),
+              //   Tab(text: "Completed",icon: Icon(Icons.done_all_rounded),)
+              // ],
+
+              tabs: const [
+                Tab(icon: Icon(Icons.list_rounded,), text: "To Listen",),
+                Tab(icon: Icon(Icons.chrome_reader_mode_rounded,),text: "Listening"),
+                Tab(icon: Icon(Icons.done_all_rounded),text: "Completed")
+              ],
+
+            ),
+          ),
+        ),
         // extendBody: true,
         // extendBodyBehindAppBar: true,
 
@@ -226,10 +219,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               // });
                 BlocProvider.of<GridListCubit>(context).toggle();
                },
-              icon: Icon(
-                  (BlocProvider.of<GridListCubit>(context).state is GridState)
-                      ? Icons.grid_view_rounded
-                      : Icons.format_list_bulleted_rounded ),
+              icon: BlocBuilder<GridListCubit,GridListState>(
+                builder: (context,state) {
+                  return Icon(
+                      (state is GridState)
+                          ? Icons.grid_view_rounded
+                          : Icons.format_list_bulleted_rounded );
+                }
+              ),
               splashRadius: 20,
             ),
 
@@ -267,39 +264,23 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         ),
 
 
-        body:Stack(
+        body: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-          //   LineChart(
-          //     LineChartData(
-          //
-          //
-          //   ),
-          //   swapAnimationDuration: Duration(milliseconds: 150), // Optional
-          //   swapAnimationCurve: Curves.linear, // Optional
-          // ),
 
-            TabBarView(
+            BlocBuilder<BookStateCubit, BookState>(
+              builder: (context,state) {
+                return TabBarView(
 
-              children: [
-                // Padding(
-                //  padding: EdgeInsets.all(10),
-                //  child:
-                ToRead(),
-                // ),
+                  children: [
+                    ViewBook(bookState: ToReadState(),),
+                    ViewBook(bookState: CurrentlyReadingState(),),
+                    ViewBook(bookState: CompleteReadingState(),),
+                  ],
 
-                // Padding(
-                //  padding: EdgeInsets.all(10),
-                //  child:
-                CurrentRead(),
-                // ),
 
-                // Padding(
-                //   padding: EdgeInsets.all(10),
-                //   child:
-                DoneReading(),
-                // ),
-              ],
+                );
+              }
             ),
 
             // Container(
@@ -396,71 +377,71 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
 
 
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-
-              padding: const EdgeInsets.only(
-                // bottom: 15,
-                 left: 30
-              ),
-              child: Container(
-
-                decoration: BoxDecoration(
-                    boxShadow: const [BoxShadow(color: Colors.black26,blurRadius: 5,offset: Offset(0,1),blurStyle: BlurStyle.inner,)],
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).appBarTheme.backgroundColor
-                ),
-                height: 58,
-                width: size.width*0.7,
-
-                child: TabBar(
-
-                  labelColor: Theme.of(context).primaryColor,
-                  unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.5),
-                  indicatorWeight: 0.01,
-                  splashBorderRadius: BorderRadius.circular(40),
-
-                  tabs: const [
-                    Tab(icon: Icon(Icons.list_rounded,),),
-                    Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
-                    Tab(icon: Icon(Icons.done_all_rounded),)
-                  ],
-
-                ),
-              ),
-            ),
-
-            FloatingActionButton(
-              elevation: 2,
-
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              splashColor: const Color(0x256E0097),
-              onPressed: ()  {
-                if(isPlaying){
-                  pageManager.pause();
-                  setState((){
-                    isPlaying = false;
-                  });
-                }else{
-                  var book = Hive.box<Book>('play').getAt(0);
-                  var seek =book?.parseDuration(book.position[0]);
-                  pageManager.seek(seek!);
-                  pageManager.play();
-                  setState((){
-                    isPlaying = true;
-                  });
-                }
-              },
-              backgroundColor: const Color(0xff6E0097),
-              child: const PlayButton(),
-            ),
-          ],
-        ),
+        // floatingActionButton: Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //   children: [
+        //     Container(
+        //       decoration: const BoxDecoration(
+        //         color: Colors.transparent,
+        //       ),
+        //
+        //       padding: const EdgeInsets.only(
+        //         // bottom: 15,
+        //          left: 30
+        //       ),
+        //       child: Container(
+        //
+        //         decoration: BoxDecoration(
+        //             boxShadow: const [BoxShadow(color: Colors.black26,blurRadius: 5,offset: Offset(0,1),blurStyle: BlurStyle.inner,)],
+        //             borderRadius: BorderRadius.circular(20),
+        //             color: Theme.of(context).appBarTheme.backgroundColor
+        //         ),
+        //         height: 58,
+        //         width: size.width*0.7,
+        //
+        //         child: TabBar(
+        //
+        //           labelColor: Theme.of(context).primaryColor,
+        //           unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.5),
+        //           indicatorWeight: 0.01,
+        //           splashBorderRadius: BorderRadius.circular(40),
+        //
+        //           tabs: const [
+        //             Tab(icon: Icon(Icons.list_rounded,),),
+        //             Tab(icon: Icon(Icons.chrome_reader_mode_rounded)),
+        //             Tab(icon: Icon(Icons.done_all_rounded),)
+        //           ],
+        //
+        //         ),
+        //       ),
+        //     ),
+        //
+        //     FloatingActionButton(
+        //       elevation: 2,
+        //
+        //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        //       splashColor: const Color(0x256E0097),
+        //       onPressed: ()  {
+        //         if(isPlaying){
+        //           pageManager.pause();
+        //           setState((){
+        //             isPlaying = false;
+        //           });
+        //         }else{
+        //           var book = Hive.box<Book>('play').getAt(0);
+        //           var seek =book?.parseDuration(book.position[0]);
+        //           pageManager.seek(seek!);
+        //           pageManager.play();
+        //           setState((){
+        //             isPlaying = true;
+        //           });
+        //         }
+        //       },
+        //       backgroundColor: const Color(0xff6E0097),
+        //       child: const PlayButton(),
+        //     ),
+        //   ],
+        // ),
 
       ),
     );
@@ -505,29 +486,4 @@ class PlayButton extends StatelessWidget {
       },
     );
   }
-}
-
-Widget tabs(){
-
-  return TabBarView(
-
-
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 0,),
-      ),
-
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 1,),
-      ),
-
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 2,),
-      ),
-    ],
-  );
-
 }
