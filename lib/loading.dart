@@ -1,5 +1,5 @@
 import 'package:echo/player/page_manager.dart';
-import 'package:echo/widgets/libraryView.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +25,7 @@ class _LoadingState extends State<Loading> {
     bool? time = prefs.getBool('timing');
     if(listview != null){
       d.log('LibraryView.listView initialized', name: 'loading.dart',);
-      LibraryView.listView = listview;
+
     }
     if(time != null){
       d.log('timing initialized', name: 'loading.dart',);

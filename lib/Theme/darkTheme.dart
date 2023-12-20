@@ -29,7 +29,7 @@ primaryColor: const Color(0xff6E0097),
   tabBarTheme: const TabBarTheme(
 
     ),
-  accentColor: Colors.black,
+  // accentColor: Colors.black,
   backgroundColor: Colors.black,
   disabledColor:  Colors.grey,
   errorColor: const Color(0xff303030),

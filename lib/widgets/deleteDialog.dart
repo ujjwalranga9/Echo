@@ -22,12 +22,11 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            imageWid(Size(250, 100), context, book),
+            imageWid(const Size(250, 100), context, book),
             Center(
               child: Text(book.getBookName(), maxLines: 2,overflow: TextOverflow.ellipsis,style:
-              TextStyle(fontSize: 15,), textAlign: TextAlign.center),
+              const TextStyle(fontSize: 15,), textAlign: TextAlign.center),
             ),
-
           ],
         ),
       ),
@@ -38,7 +37,7 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
             onPressed: (){
               Navigator.of(context).pop(false);
               },
-            icon: Icon(Icons.close)),
+            icon: const Icon(Icons.close)),
         IconButton(
             onPressed: (){
               Hive.box<Book>('Lib').delete(book.getBookName()+book.id);

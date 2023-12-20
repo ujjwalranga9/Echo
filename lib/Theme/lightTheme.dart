@@ -11,7 +11,7 @@ ThemeData lightTheme(){
 
     ),
     indicatorColor: Colors.black,
-    accentColor: Colors.blue.shade50,
+    // accentColor: Colors.blue.shade50,
     iconTheme: const IconThemeData(
         color: Colors.black
     ),

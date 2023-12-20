@@ -1,5 +1,4 @@
 import 'package:echo/main.dart';
-import 'package:echo/widgets/libraryView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,28 +62,26 @@ class _SettingsState extends State<Settings> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: CheckboxListTile(
-                    tileColor: Theme.of(context).errorColor,
-
-                    title:  Text("Library ListView",style: TextStyle(
-                      color: Theme.of(context).textTheme.titleMedium?.color,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                      // letterSpacing: 3
-                    ),),
-                    activeColor: Colors.black,
-                    value: LibraryView.listView,
-                    onChanged: (val){
-                      setState((){
-                        LibraryView.listView  = !LibraryView.listView;
-                        widget.fun();
-                      });
-                      print(LibraryView.listView);
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(10),
+                //   child: CheckboxListTile(
+                //     tileColor: Theme.of(context).errorColor,
+                //
+                //     title:  Text("Library ListView",style: TextStyle(
+                //       color: Theme.of(context).textTheme.titleMedium?.color,
+                //       fontWeight: FontWeight.w400,
+                //       fontSize: 20,
+                //       // letterSpacing: 3
+                //     ),),
+                //     activeColor: Colors.black,
+                //     value:
+                //     onChanged: (val){
+                //
+                //       });
+                //
+                //     },
+                //   ),
+                // ),
 
                 Padding(
                   padding: const EdgeInsets.all(10),

@@ -1,4 +1,6 @@
+import 'package:echo/bloc/book_state_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 
 import '../class/book.dart';
@@ -80,7 +82,7 @@ class _LibraryGridState extends State<LibraryGrid> {
 
                                     content: SizedBox(
 
-                                      height: 70,
+                                      height: 100,
                                       child: Column(
                                         children: [
                                           Row(
@@ -93,8 +95,10 @@ class _LibraryGridState extends State<LibraryGrid> {
                                                 selected: newBook,onSelected: (b){
                                                 values[index].newBook();
                                                    newBook = b;
+                                                values[index].status = 0;
                                                   Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id, values[index]);
                                                   Navigator.of(ctx).pop(true);
+                                                  BlocProvider.of<BookStateCubit>(context).toRead();
                                                   widget.update();
                                               },),
                                               ChoiceChip(
@@ -102,6 +106,7 @@ class _LibraryGridState extends State<LibraryGrid> {
                                                 selected: read,onSelected: (b){
                                                 values[index].reading();
                                                    read = b;
+                                                values[index].status = 1;
                                                     Hive.box<Book>("Lib").put(values[index].getBookName() +values[index].id, values[index]);
                                                     Navigator.of(ctx).pop(true);
                                                     widget.update();
@@ -112,6 +117,7 @@ class _LibraryGridState extends State<LibraryGrid> {
                                                 selected: done,onSelected: (b){
                                                 values[index].done();
                                                   done = b;
+                                                values[index].status = 2;
                                                   Hive.box<Book>("Lib").put(values[index].getBookName() + values[index].id,values[index]);
                                                   Navigator.of(ctx).pop(true);
                                                   widget.update();
@@ -147,9 +153,7 @@ class _LibraryGridState extends State<LibraryGrid> {
                                      child: Stack(
                                         alignment: Alignment.bottomRight,
                                        children: [
-                                         Hero(
-                                             tag: "image",
-                                            child: ImageWidget(book: values[index],width: 178.3,height: 265)),
+                                         ImageWidget(book: values[index],width: 178.3,height: 265),
                                          // Container(width: 178.3,height: 265,decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),),
 
                                          if(timing)Padding(

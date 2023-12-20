@@ -38,7 +38,8 @@ class GetWebData {
       if(search)  image = e.querySelector('img')?.attributes['src'].toString();
       List<String> audio = e.querySelectorAll('audio.wp-audio-shortcode > a').map((e) => e.attributes['href']!).toList();
       String? story = e.querySelector('article  div.collapseomatic_content')?.innerHtml.toString();
-      Book book = Book(audio: audio, title: title, imageUrl: image,id: id!,story: story);
+      Book book = Book(audio: audio, title: title, imageUrl: image,id: id!,story: story,);
+      book.status = 0;
       b.add(book);
 
     });

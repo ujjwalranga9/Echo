@@ -60,7 +60,7 @@ class _GetDataState extends State<GetData> {
 
      return Scaffold(
        appBar: AppBar(
-         title: Text("Change Image"),
+         title: const Text("Change Image"),
          backgroundColor: Colors.blue.shade50,
          actions: [
            IconButton(onPressed: (){
@@ -69,10 +69,10 @@ class _GetDataState extends State<GetData> {
              getWebsiteData();
 
 
-           }, icon: Icon(Icons.person_search))
+           }, icon: const Icon(Icons.person_search))
          ],
        ),
-      body: (urlImage.isEmpty == true) ? Center(child: CircularProgressIndicator(),) :GridView.builder(
+      body: (urlImage.isEmpty == true) ? const Center(child: CircularProgressIndicator(),) :GridView.builder(
         itemCount: urlImage.length,
         gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,

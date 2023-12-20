@@ -1,22 +1,21 @@
 
 import 'package:echo/bloc/grid_list_cubit.dart';
+import 'package:echo/screens/Home/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../bloc/book_state_bloc.dart';
 import '../../class/book.dart';
 import '../../main.dart';
 import '../../player/notifier/play_button_notifier.dart';
 import '../../printer.dart';
-import '../../widgets/currentlyReading.dart';
-import '../../widgets/doneReading.dart';
-import '../../widgets/libraryView.dart';
-import '../../widgets/toRead.dart';
+
+
 import 'dart:developer' as d;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-  static int state = 1;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,12 +27,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   void initState(){
     d.log('Homepage Init is called', name: 'home.dart',);
     logE("Building");
-    // logY("Building");
-    // logB("Building");
-    // logR("Building");
-    // logC("Building");
-    // logM("Building ");
-    // logW("Building");
     super.initState();
   }
 
@@ -226,10 +219,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               // });
                 BlocProvider.of<GridListCubit>(context).toggle();
                },
-              icon: Icon(
-                  (BlocProvider.of<GridListCubit>(context).state is GridState)
-                      ? Icons.grid_view_rounded
-                      : Icons.format_list_bulleted_rounded ),
+              icon: BlocBuilder<GridListCubit,GridListState>(
+                builder: (context,state) {
+                  return Icon(
+                      (state is GridState)
+                          ? Icons.grid_view_rounded
+                          : Icons.format_list_bulleted_rounded );
+                }
+              ),
               splashRadius: 20,
             ),
 
@@ -267,39 +264,21 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         ),
 
 
-        body:Stack(
+        body: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-          //   LineChart(
-          //     LineChartData(
-          //
-          //
-          //   ),
-          //   swapAnimationDuration: Duration(milliseconds: 150), // Optional
-          //   swapAnimationCurve: Curves.linear, // Optional
-          // ),
 
-            TabBarView(
+            BlocBuilder<BookStateCubit, BookState>(
+              builder: (context,state) {
+                return TabBarView(
 
-              children: [
-                // Padding(
-                //  padding: EdgeInsets.all(10),
-                //  child:
-                ToRead(),
-                // ),
-
-                // Padding(
-                //  padding: EdgeInsets.all(10),
-                //  child:
-                CurrentRead(),
-                // ),
-
-                // Padding(
-                //   padding: EdgeInsets.all(10),
-                //   child:
-                DoneReading(),
-                // ),
-              ],
+                  children: [
+                    ViewBook(bookState: ToReadState(),),
+                    ViewBook(bookState: CurrentlyReadingState(),),
+                    ViewBook(bookState: CompleteReadingState(),),
+                  ],
+                );
+              }
             ),
 
             // Container(
@@ -505,29 +484,4 @@ class PlayButton extends StatelessWidget {
       },
     );
   }
-}
-
-Widget tabs(){
-
-  return TabBarView(
-
-
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 0,),
-      ),
-
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 1,),
-      ),
-
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: LibraryView(state: 2,),
-      ),
-    ],
-  );
-
 }

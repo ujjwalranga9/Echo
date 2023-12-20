@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'bloc/book_state_bloc.dart';
 import 'class/book.dart';
 import 'dart:developer' as d;
 
@@ -47,6 +48,7 @@ Future<void> main() async {
 
 
   await setupServiceLocator();
+  Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 
 }
@@ -77,6 +79,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_)=>GridListCubit()),
+        BlocProvider(create: (_)=>BookStateCubit()),
       ],
       child: MaterialApp(
 
@@ -89,5 +92,21 @@ class _MyAppState extends State<MyApp> {
 
       ),
     );
+  }
+}
+
+
+
+class AppBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    if (bloc is Cubit) print(change);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
   }
 }
