@@ -8,16 +8,14 @@ class LocalRepository {
   final Box<Book> _box =  Hive.box<Book>('Lib');
 
   List<Book> getAllBooks (){
-    List<Book> books = [];
-    for(int i = 0 ; i < _box.length ; i++) {
-        books.add(_box.getAt(i)!);
-    }
-    return books;
+    return _box.values.toList();
   }
 
   List<Book> sortedBooksByLen(){
-    List<Book> values = _box.values.toList();
+
     List<Book> books = [];
+
+    List<Book> values = _box.values.toList();
     values.sort((a,b)=> a.parseDuration(a.bookLength()).compareTo(b.parseDuration(b.bookLength())));
 
     for(int i = 0 ; i < values.length ; i++){
@@ -27,16 +25,17 @@ class LocalRepository {
   }
 
   void addBook(Book book){
-    // Hive.box<Book>("Lib").put(book.getBookName() +book.id, book);
     _box.put(book.getBookName() +book.id, book);
   }
   void updateBook({required Book oldBook,required Book newBook}){
 
-    for(int i = 0 ; i < _box.length ; i++) {
-     if(_box.getAt(i) == oldBook){
-       _box.putAt(i, newBook);
-     }
-    }
+    _box.put(oldBook.getBookName() +oldBook.id, newBook);
+
+    // for(int i = 0 ; i < _box.length ; i++) {
+    //  if(_box.getAt(i) == oldBook){
+    //    _box.putAt(i, newBook);
+    //  }
+    // }
   }
 
   void deleteBook(Book book){
@@ -75,14 +74,28 @@ class LocalRepository {
   }
 
   void changeState({required Book book, required ReadingState state}){
-    if(state == ReadingState.toRead){
-      book.status = 0;
+    if(state == ReadingState.done){
+      book.status = 2;
     }else if (state == ReadingState.inProgress){
       book.status = 1;
     }else{
-      book.status = 2;
+      book.status = 0;
     }
     _box.put(book.getBookName() +book.id, book);
+  }
+
+  ReadingState getState({required Book book}){
+    int? checkBookStatus = _box.get(book.getBookName() +book.id)?.status;
+    if(checkBookStatus == 1){
+      return ReadingState.inProgress;
+    }else if (checkBookStatus == 2){
+      return ReadingState.done;
+    }else if(checkBookStatus == 0){
+      return ReadingState.toRead;
+    }else{
+      return ReadingState.unknown;
+    }
+
   }
 
 

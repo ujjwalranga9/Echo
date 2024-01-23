@@ -1,7 +1,9 @@
 
 import 'package:bloc/bloc.dart';
+import 'package:echo/class/enum.dart';
 import 'package:equatable/equatable.dart';
 
+import '../class/book.dart';
 import '../repository/localdata.dart';
 
 class LocalRepositoryBloc extends Bloc<LocalRepositoryEvent , LocalRepositoryState>{
@@ -25,11 +27,19 @@ class LocalRepositoryBloc extends Bloc<LocalRepositoryEvent , LocalRepositorySta
     });
 
     on<LocalRepositoryChangeStateEvent>((event,emit){
+
       emit(LocalRepositoryChangeState());
     });
 
 
   }
+
+
+  void changeState(Book book , ReadingState state){
+    localRepository.changeState(book: book, state: state);
+    emit(LocalRepositoryChangeState());
+  }
+
 }
 
 

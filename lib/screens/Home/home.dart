@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                 // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
                 color: Colors.blue.shade50
             ),
-            height: 75,
+            height: MediaQuery.of(context).size.height*0.1,
 
             child: TabBar(
 

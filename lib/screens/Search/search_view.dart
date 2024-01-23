@@ -51,7 +51,7 @@ class _Search_View_State extends State<Search_View> {
                 delegate: CustomSliverDelegate(
                     expandedHeight: size.height*0.6,
                     size: size,book: widget.book,
-                    widget: imageWid(size,context,widget.book),
+                    widget: imageWid(size,context,widget.book,true),
                     box: box,
                    update: (){
                       setState(() {

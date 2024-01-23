@@ -248,7 +248,7 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
                   Stack(
                     alignment: Alignment.topRight,
                     children: [
-                      imageWid(size*1.15,context,widget.book),
+                      imageWid(size*1.15,context,widget.book,false),
                       if(StaticValue.sleepTimer != 0) Padding(
                         padding: const EdgeInsets.all(10),
                         child: Container(

@@ -78,7 +78,7 @@ class _LibState extends State<Lib> {
             },
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20)
+            // borderRadius: BorderRadius.circular(20)
           ),
           centerTitle: true,
 
@@ -137,39 +137,39 @@ class _LibState extends State<Lib> {
                 //     ],
                 //
                 // ),
-               if(search == '') Padding(
-                 padding: const EdgeInsets.only(top: 20,),
-                 child: CarouselSlider(
-                     // items: [
-                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
-                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
-                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
-                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
-                     //   imageWid(size, context, books[Random().nextInt(books.length)]),
-                     // ],
-                   items: books.map((e) => imageWid(size, context,e)).toList(),
-                     options: CarouselOptions(
-                       height: 260,
-                       enlargeCenterPage: true,
-                       autoPlay: true,
-                       autoPlayCurve: Curves.fastOutSlowIn,
-                       aspectRatio: 9/16,
-                       enableInfiniteScroll: true,
-                       autoPlayAnimationDuration: const Duration(seconds: 1),
-                       viewportFraction: 0.45
+               // if(search == '') Padding(
+               //   padding: const EdgeInsets.only(top: 20,),
+               //   child: CarouselSlider(
+               //       // items: [
+               //       //   imageWid(size, context, books[Random().nextInt(books.length)]),
+               //       //   imageWid(size, context, books[Random().nextInt(books.length)]),
+               //       //   imageWid(size, context, books[Random().nextInt(books.length)]),
+               //       //   imageWid(size, context, books[Random().nextInt(books.length)]),
+               //       //   imageWid(size, context, books[Random().nextInt(books.length)]),
+               //       // ],
+               //     items: books.map((e) => imageWid(size, context,e)).toList(),
+               //       options: CarouselOptions(
+               //         height: 260,
+               //         enlargeCenterPage: true,
+               //         autoPlay: true,
+               //         autoPlayCurve: Curves.fastOutSlowIn,
+               //         aspectRatio: 9/16,
+               //         enableInfiniteScroll: true,
+               //         autoPlayAnimationDuration: const Duration(seconds: 1),
+               //         viewportFraction: 0.45
+               //
+               //       )
+               //   ),
+               // ),
 
-                     )
-                 ),
-               ),
-
-                Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20,left: 20),
-                      child: Text("Library",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-                    ),
-                  ],
-                ),
+                // const Row(
+                //   children: [
+                //     Padding(
+                //       padding: EdgeInsets.only(top: 20,left: 20),
+                //       child: Text("Library",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                //     ),
+                //   ],
+                // ),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 15,right: 15,top: 10),
@@ -179,10 +179,10 @@ class _LibState extends State<Lib> {
                       itemCount: searchBook.length,
 
                       gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
+                        crossAxisCount: 2,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 4/6,
+                        childAspectRatio: 4/5.3,
 
                       ),
 
@@ -212,7 +212,21 @@ class _LibState extends State<Lib> {
                               });
                               setState(() {});
                             },
-                            child: imageWid(MediaQuery.of(context).size, context, searchBook[index])
+
+                            child: SizedBox(
+
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Hero(
+                                    tag: searchBook[index].getBookName() + searchBook[index].id,
+                                      child: imageWid(MediaQuery.of(context).size, context, searchBook[index],true)),
+                                  Text(searchBook[index].getBookName(),maxLines: 1,overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                                  Text(searchBook[index].getAuthor(),maxLines: 1,overflow: TextOverflow.ellipsis,)
+                                ],
+                              ),
+                            )
                         );
                       }),
                 ),

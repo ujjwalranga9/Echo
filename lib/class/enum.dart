@@ -1,2 +1,2 @@
 
-enum ReadingState {toRead,inProgress,done}
+enum ReadingState {toRead,inProgress,done,unknown}

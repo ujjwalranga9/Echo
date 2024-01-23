@@ -11,6 +11,8 @@ class BookStateCubit extends Cubit<BookState>{
   void done() => emit(CompleteReadingState());
   void toRead() => emit(ToReadState());
   void reading() => emit(CurrentlyReadingState());
+
+  void delete() => emit(DeleteState());
 }
 
 
@@ -22,6 +24,6 @@ abstract class BookState extends Equatable{
 class ToReadState extends BookState{}
 class CurrentlyReadingState extends BookState{}
 class CompleteReadingState extends BookState{}
-
+class DeleteState extends BookState{}
 
 

@@ -1,20 +1,15 @@
 
-import 'package:echo/main.dart';
 import 'package:echo/screens/AudioPlayer/audioPlayerClass.dart';
 import 'package:echo/screens/bookDetails/widgets/imgWidget.dart';
-import 'package:echo/screens/bookDetails/widgets/textUpdate.dart';
 import 'package:echo/services/getData.dart';
-import 'package:echo/widgets/imageWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:network_to_file_image/network_to_file_image.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:progress_indicator/progress_indicator.dart';
 
 import '../../class/book.dart';
-import '../../services/download.dart';
 
 class BookDetails extends StatefulWidget {
   final Book book;
@@ -57,8 +52,8 @@ class _BookDetailsState extends State<BookDetails> {
                               }));
 
                         },
-                        child: Hero(tag: "image",
-                        child: imageWid(size,context,widget.book))),
+                        child: Hero(tag: widget.book.getBookName() + widget.book.id,
+                        child: imageWid(size,context,widget.book,false))),
                   update: (){
                       setState(() {
 

@@ -81,13 +81,13 @@ class _MyAppState extends State<MyApp> {
 
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<LocalRepository>(create: (_) => localRepository),
+        RepositoryProvider<LocalRepository>(create: (context) => localRepository),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_)=>GridListCubit()),
-          BlocProvider(create: (_)=>BookStateCubit()),
-          BlocProvider(create: (_)=> LocalRepositoryBloc(localRepository)),
+          BlocProvider<GridListCubit>(create: (context)=>GridListCubit()),
+          BlocProvider<BookStateCubit>(create: (context)=>BookStateCubit()),
+          BlocProvider<LocalRepositoryBloc>(create: (context)=> LocalRepositoryBloc(localRepository)),
         ],
         child: MaterialApp(
 
