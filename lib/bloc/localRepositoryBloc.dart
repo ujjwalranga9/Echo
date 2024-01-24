@@ -35,8 +35,8 @@ class LocalRepositoryBloc extends Bloc<LocalRepositoryEvent , LocalRepositorySta
   }
 
 
-  void changeState(Book book , ReadingState state){
-    localRepository.changeState(book: book, state: state);
+  void changeState(Book book , ReadingState state1){
+    localRepository.changeState(book: book, state: state1);
     emit(LocalRepositoryChangeState());
   }
 
