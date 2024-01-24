@@ -27,10 +27,9 @@ class _LibraryGridViewState extends State<LibraryGridView> {
         SliverToBoxAdapter(
           child: Container(
               color: Theme.of(context).backgroundColor,
-              height: MediaQuery.of(context).size.height*0.79,
-              child: (widget.books.isNotEmpty) ? BlocBuilder<BookStateCubit,BookState>(
-                builder: (context,state) {
-                  return GridView.builder(
+              height: MediaQuery.of(context).size.height*0.85,
+              child: (widget.books.isNotEmpty) ?
+                   GridView.builder(
                         itemCount: widget.books.length,
                         gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
@@ -105,9 +104,8 @@ class _LibraryGridViewState extends State<LibraryGridView> {
                           );
                         } ,
 
-                      );
-                }
-              ): const Center(child:
+                      )
+                : const Center(child:
               Padding(
                 padding: EdgeInsets.only(bottom: 80),
                 child: Text("Nothing to Show here"),

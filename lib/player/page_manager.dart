@@ -1,6 +1,8 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:echo/bloc/miniPlayerBloc.dart';
 import 'package:echo/services/download.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -207,7 +209,8 @@ class PageManager {
   //   return _audioPlayer.duration.toString();
   // }
 
-  void play() async {
+  void play(BuildContext context) async {
+      BlocProvider.of<MiniPlayerBloc>(context).add(MiniPlayerLoadedEvent());
       _audioHandler.play();
 
   }

@@ -47,12 +47,11 @@ class _LibState extends State<Lib> {
 
   @override
   Widget build(BuildContext context) {
-    var size = const Size (370,200);
 
     return Scaffold(
         extendBodyBehindAppBar: true,
         extendBody: true,
-        backgroundColor: Colors.blue.shade50,
+        backgroundColor: Colors.white,
 
         appBar: AppBar(
 
@@ -77,7 +76,7 @@ class _LibState extends State<Lib> {
               setState(() {});
             },
           ),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             // borderRadius: BorderRadius.circular(20)
           ),
           centerTitle: true,

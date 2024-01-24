@@ -194,12 +194,17 @@ class Book{
     }
 
     final double percentage = (listen.inMilliseconds/length.inMilliseconds) * 100 ;
-    if(percentage == double.nan){
-      return 0.0;
-    }else if(percentage == double.infinity){
-      return 0.0;
+
+    if(percentage >= 0.0 && percentage <= 100.00){
+      return percentage;
     }
-    return percentage;
+    // if(percentage == double.nan){
+    //   return 0.0;
+    // }else if(percentage == double.infinity){
+    //   return 0.0;
+    // }
+
+    return 0.0;
   }
   double getListenedIndexLength(int index){
     double x = 0.0;

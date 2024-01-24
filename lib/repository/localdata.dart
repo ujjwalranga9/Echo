@@ -40,7 +40,7 @@ class LocalRepository {
 
   void deleteBook(Book book){
     // Hive.box<Book>("Lib").delete(book.getBookName() +book.id);
-   _box.delete(book.getBookName() +book.id);
+    _box.delete(book.getBookName() +book.id);
   }
 
 

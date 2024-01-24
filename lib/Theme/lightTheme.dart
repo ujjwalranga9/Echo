@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 ThemeData lightTheme(){
-
+  return ThemeData.light(useMaterial3: true);
   return ThemeData(
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Color(0xff6E0097),

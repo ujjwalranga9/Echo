@@ -16,11 +16,6 @@ class GridListState extends Equatable {
   @override
   List<Object?> get props => [];
 }
-class GridState extends GridListState{
-  @override
-  List<Object?> get props => [];
-}
-class ListState extends GridListState{
-  @override
-  List<Object?> get props => [];
-}
+
+class GridState extends GridListState{}
+class ListState extends GridListState{}

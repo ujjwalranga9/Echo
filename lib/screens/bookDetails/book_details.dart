@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:progress_indicator/progress_indicator.dart';
 
 import '../../class/book.dart';
+import '../../main.dart';
 
 class BookDetails extends StatefulWidget {
   final Book book;
@@ -182,10 +183,12 @@ Widget getButton(Size size,BuildContext context,Book book){
           // if(pageManager.book.bookName == book.bookName){
           //
           // }else {
+          nowPlayingBook = book;
             Navigator.push(
                 context,
                 PageTransition(
                     type: PageTransitionType.fade,
+
                     child: AudioPlayerClass(book: book,),
                     duration: const Duration(milliseconds: 350)
                 )

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:echo/Theme/darkTheme.dart';
 import 'package:echo/Theme/lightTheme.dart';
 import 'package:echo/bloc/grid_list_cubit.dart';
+import 'package:echo/bloc/miniPlayerBloc.dart';
 import 'package:echo/player/audioService/service_locator.dart';
 import 'package:echo/player/page_manager.dart';
 import 'package:echo/repository/localdata.dart';
@@ -9,6 +10,7 @@ import 'package:echo/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'bloc/book_state_bloc.dart';
 import 'bloc/localRepositoryBloc.dart';
@@ -16,6 +18,7 @@ import 'class/book.dart';
 import 'dart:developer' as d;
 
 late PageManager pageManager;
+late Book nowPlayingBook;
 late Directory directory;
 late Directory externalDirectory;
 
@@ -87,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         providers: [
           BlocProvider<GridListCubit>(create: (context)=>GridListCubit()),
           BlocProvider<BookStateCubit>(create: (context)=>BookStateCubit()),
+          BlocProvider<MiniPlayerBloc>(create: (context)=>MiniPlayerBloc()),
           BlocProvider<LocalRepositoryBloc>(create: (context)=> LocalRepositoryBloc(localRepository)),
         ],
         child: MaterialApp(
@@ -108,11 +112,34 @@ class _MyAppState extends State<MyApp> {
 
 class AppBlocObserver extends BlocObserver {
   @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
+    print(bloc);
+  }
+
+  @override
+  void onEvent(Bloc bloc, Object? event) {
+    super.onEvent(bloc, event);
+    print(bloc);
+  }
+
+  @override
+  void onClose(BlocBase bloc) {
+    super.onClose(bloc);
+    print(bloc);
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    super.onError(bloc, error, stackTrace);
+    print(error);
+  }
+
+  @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
     if (bloc is Cubit) print(change);
   }
-
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);

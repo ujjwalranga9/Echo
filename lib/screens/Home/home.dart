@@ -1,10 +1,13 @@
 
 import 'package:echo/bloc/grid_list_cubit.dart';
+import 'package:echo/bloc/miniPlayerBloc.dart';
 import 'package:echo/screens/Home/view.dart';
+import 'package:echo/widgets/imageWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../bloc/book_state_bloc.dart';
 import '../../class/book.dart';
@@ -140,15 +143,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
             decoration: BoxDecoration(
                 // borderRadius: BorderRadius.circular(20),
                 // boxShadow: [BoxShadow(color: Colors.grey.shade300,blurRadius: 10,blurStyle: BlurStyle.normal)],
-                color: Colors.blue.shade50
+                color: Theme.of(context).backgroundColor
             ),
-            height: MediaQuery.of(context).size.height*0.1,
+            height: MediaQuery.of(context).size.height*0.08,
 
             child: TabBar(
 
               labelColor: Colors.black,
-              indicatorColor: Colors.black,
-              unselectedLabelColor: Colors.black45,
+              indicatorColor: Theme.of(context).backgroundColor,
+              unselectedLabelColor: Theme.of(context).disabledColor,
               indicatorWeight: 0.01,
               splashBorderRadius: BorderRadius.circular(40),
 
@@ -282,6 +285,85 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                 );
               }
             ),
+
+
+
+            BlocBuilder<MiniPlayerBloc,MiniPlayerState>(
+              builder: (context,state) {
+                return Miniplayer(
+
+                  // onDismiss: (){
+                  //   BlocProvider.of<MiniPlayerBloc>(context).add(MiniPlayerDismissEvent());
+                  //   pageManager.pause();
+                  // },
+                  minHeight: 70,
+                  maxHeight: size.height,
+                  builder: (height, percentage) {
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ImageWidget(book: pageManager.book, width: size.width*0.25),
+                        Container(
+
+                          width: size.width*0.35,
+                          // color: Colors.yellow,
+                          child: Column(
+
+                            mainAxisAlignment: MainAxisAlignment.center,
+
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  pageManager.book.getBookName(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+
+                                  style: const TextStyle(fontSize: 18),),
+                              ),
+                              Text(pageManager.book.getAuthor()),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width:size.width*0.4,
+                          //color:Colors.pink,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous_rounded)),
+                              IconButton(
+                                  icon:(isPlaying == false) ? const Icon(Icons.play_arrow_rounded) : const Icon(Icons.pause),
+                                onPressed: (){
+                                  if(isPlaying){
+                                            pageManager.pause();
+                                            setState((){
+                                              isPlaying = false;
+                                            });
+                                          }else{
+                                            // var book = Hive.box<Book>('play').getAt(0);
+                                            // var seek =book?.parseDuration(book.position[0]);
+                                            // pageManager.seek(seek!);
+                                            pageManager.play(context);
+                                            setState((){
+                                              isPlaying = true;
+                                            });
+                              };},),
+                              IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next_rounded))
+                            ],
+                          ),
+                        )
+                      ],
+                    );
+                    // return Center(
+                    //   child: Text('$height, ${percentage*100}'),
+                    // );
+                  },
+                );
+              }
+            ),
+
 
             // Container(
             //   decoration: const BoxDecoration(
@@ -467,14 +549,14 @@ class PlayButton extends StatelessWidget {
               color: Colors.white,
               splashRadius: 20,
               icon: const Icon(Icons.play_arrow_rounded),
-              onPressed: pageManager.play,
+              onPressed: (){pageManager.play(context);},
             );
           case ButtonState.paused:
             return IconButton(
               color: Colors.white,splashRadius: 20,
               icon: const Icon(Icons.play_arrow_rounded),
 
-              onPressed: pageManager.play,
+              onPressed: (){pageManager.play(context);},
             );
           case ButtonState.playing:
             return IconButton(

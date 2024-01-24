@@ -23,7 +23,7 @@ class _LibraryListViewState extends State<LibraryListView> {
 
         SliverToBoxAdapter(
           child: SizedBox(
-              height: MediaQuery.of(context).size.height*0.79,
+              height: MediaQuery.of(context).size.height*0.85,
               child: (widget.books.isNotEmpty) ? ListView.builder(
                       itemCount: widget.books.length,
                       itemBuilder: (ctx,index){
@@ -86,8 +86,10 @@ class _LibraryListViewState extends State<LibraryListView> {
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          IconButton(onPressed: (){}, icon: const Icon(Icons.more_horiz)),
-                                          SizedBox(
+                                          IconButton(onPressed: (){
+
+                                          }, icon: const Icon(Icons.more_horiz)),
+                                          if(bok.getPercentageListenedDouble() != double.infinity)SizedBox(
                                             height: 30,
                                             width: 30,
                                             child: CircularProgressIndicator(

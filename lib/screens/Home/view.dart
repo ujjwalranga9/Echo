@@ -38,13 +38,17 @@ class _ViewState extends State<ViewBook> {
             return SafeArea(
 
               child: (state is GridState)
-                  ?  LibraryGridView(
-                      books: (widget.bookState is ToReadState)
-                          ? BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllToReadBooks()
-                          : (widget.bookState is CurrentlyReadingState)
-                          ? BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllCurrentlyReadingBooks()
-                          : BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllCompletedBooks(),
-                    )
+                  ?  BlocBuilder<LocalRepositoryBloc,LocalRepositoryState>(
+                    builder: (context,state2) {
+                      return LibraryGridView(
+                          books: (widget.bookState is ToReadState)
+                              ? BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllToReadBooks()
+                              : (widget.bookState is CurrentlyReadingState)
+                              ? BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllCurrentlyReadingBooks()
+                              : BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllCompletedBooks(),
+                        );
+                    }
+                  )
                   : LibraryListView(
                 books: (widget.bookState is ToReadState)
                     ? BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getAllToReadBooks()

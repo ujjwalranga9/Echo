@@ -313,7 +313,7 @@ class PlayButton extends StatelessWidget {
                 icon: const Icon(Icons.play_circle_rounded),
                 splashRadius: 20,
                 iconSize: 70,
-                onPressed: pageManager.play,
+                onPressed: (){pageManager.play(context);},
               ),
                 SizedBox(
                     height: 70,
@@ -330,7 +330,7 @@ class PlayButton extends StatelessWidget {
               icon: const Icon(Icons.play_circle_rounded),
               iconSize: 70,
               splashRadius: 20,
-              onPressed: pageManager.play,
+              onPressed:(){pageManager.play(context);},
             );
           case ButtonState.playing:
             return IconButton(

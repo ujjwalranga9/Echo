@@ -36,7 +36,10 @@ class _AudioPlayerClassState extends State<AudioPlayerClass> {
    Timer? timer;
   @override
   void initState(){
-    pageManager.setBook(widget.book);
+    if(nowPlayingBook != pageManager.book){
+      pageManager.setBook(widget.book);
+    }
+
 
     super.initState();
 
@@ -503,7 +506,7 @@ class PlayButton extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28)
                   ),
-                  onPressed: pageManager.play,
+                  onPressed: (){pageManager.play(context);},
                   color: Colors.indigo,
                   child: const Icon(color: Colors.white,
                     size: 40,
@@ -530,7 +533,7 @@ class PlayButton extends StatelessWidget {
                 if(StaticValue.sleepTimer != 0){
                   startTimer();
                 }
-                pageManager.play();
+                pageManager.play(context);
                 },
               color: Colors.indigo,
               child: const Icon(

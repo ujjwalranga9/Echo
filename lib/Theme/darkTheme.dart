@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 ThemeData darkTheme() {
+  return ThemeData.dark(useMaterial3: true);
   return ThemeData(
 
   appBarTheme:   const AppBarTheme(

@@ -11,7 +11,7 @@ class LocalRepositoryBloc extends Bloc<LocalRepositoryEvent , LocalRepositorySta
   LocalRepositoryBloc(this.localRepository) : super(LocalRepositoryInitialState()){
 
     on<LocalRepositoryAddBookEvent>((event,emit){
-      emit(LocalRepositoryAddBookState());
+      emit(LocalRepositoryAddBookState(event.book));
     });
 
     on<LocalRepositorySortBooksEvent>((event,emit){
@@ -19,26 +19,26 @@ class LocalRepositoryBloc extends Bloc<LocalRepositoryEvent , LocalRepositorySta
     });
 
     on<LocalRepositoryBookUpdateEvent>((event,emit){
-      emit(LocalRepositoryBookUpdateState());
+      emit(LocalRepositoryBookUpdateState(newBook: event.newBook,oldBook: event.oldBook));
     });
 
     on<LocalRepositoryDeleteEvent>((event,emit){
-      emit(LocalRepositoryDeleteState());
+      emit(LocalRepositoryInitialState());
+      localRepository.deleteBook(event.book);
+      emit(LocalRepositoryDeleteState(event.book));
     });
 
     on<LocalRepositoryChangeStateEvent>((event,emit){
-
-      emit(LocalRepositoryChangeState());
+      emit(LocalRepositoryInitialState());
+      localRepository.changeState(book: event.book, state: event.readingState);
+      emit(LocalRepositoryChangeState(book: event.book,readingState: event.readingState));
     });
 
 
   }
 
 
-  void changeState(Book book , ReadingState state){
-    localRepository.changeState(book: book, state: state);
-    emit(LocalRepositoryChangeState());
-  }
+
 
 }
 
@@ -54,8 +54,10 @@ class LocalRepositoryInitialEvent extends LocalRepositoryEvent {
 }
 
 class LocalRepositoryAddBookEvent extends LocalRepositoryEvent{
+  final Book book;
+  LocalRepositoryAddBookEvent(this.book);
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [book];
 }
 
 class LocalRepositorySortBooksEvent extends LocalRepositoryEvent{
@@ -64,18 +66,26 @@ class LocalRepositorySortBooksEvent extends LocalRepositoryEvent{
 }
 
 class LocalRepositoryBookUpdateEvent extends LocalRepositoryEvent{
+  final Book oldBook;
+  final Book newBook;
+  LocalRepositoryBookUpdateEvent({required this.oldBook,required this.newBook});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [oldBook,newBook];
 }
 
 class LocalRepositoryDeleteEvent extends LocalRepositoryEvent{
+  final Book book;
+  LocalRepositoryDeleteEvent(this.book);
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [book];
 }
 
 class LocalRepositoryChangeStateEvent extends LocalRepositoryEvent{
+  final Book book;
+  final ReadingState readingState;
+  LocalRepositoryChangeStateEvent({required this.book,required this.readingState});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [book,readingState];
 }
 
 
@@ -89,13 +99,19 @@ class LocalRepositoryInitialState extends LocalRepositoryState{
 }
 
 class LocalRepositoryAddBookState extends LocalRepositoryState{
+  final Book book;
+  LocalRepositoryAddBookState(this.book);
   @override
-  List<Object?> get props =>[];
+  List<Object?> get props =>[book];
 }
 
 class LocalRepositoryBookUpdateState extends LocalRepositoryState{
+
+  final Book oldBook;
+  final Book newBook;
+  LocalRepositoryBookUpdateState({required this.oldBook,required this.newBook});
   @override
-  List<Object?> get props =>[];
+  List<Object?> get props =>[oldBook,newBook];
 }
 class LocalRepositorySortBooksState extends LocalRepositoryState{
   @override
@@ -103,11 +119,16 @@ class LocalRepositorySortBooksState extends LocalRepositoryState{
 }
 
 class LocalRepositoryDeleteState extends LocalRepositoryState{
+  final Book book;
+  LocalRepositoryDeleteState(this.book);
   @override
-  List<Object?> get props =>[];
+  List<Object?> get props =>[book];
 }
 
 class LocalRepositoryChangeState extends LocalRepositoryState{
+  final Book book;
+  final ReadingState readingState;
+  LocalRepositoryChangeState({required this.book,required this.readingState});
   @override
-  List<Object?> get props =>[];
+  List<Object?> get props =>[book,readingState];
 }

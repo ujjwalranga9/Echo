@@ -21,7 +21,7 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
 
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20)
-      ),backgroundColor: Colors.teal.shade50,
+      ),backgroundColor: Colors.white,
 
       title: const Center(child: Text("Are you Sure?")),
       content: SizedBox(
@@ -35,7 +35,7 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
               Row(
                 children: [
                   imageWid(const Size(250, 100), context, book,true),
-                  BlocBuilder<BookStateCubit,BookState>(
+                  BlocBuilder<LocalRepositoryBloc,LocalRepositoryState>(
                       builder: (context,state) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,20 +46,20 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
                               selected: (BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getState(book: book) == ReadingState.toRead) ? true : false ,
           
                               onSelected: (val){
-                                BlocProvider.of<LocalRepositoryBloc>(context).localRepository.changeState(book: book,state: ReadingState.toRead);
-                                BlocProvider.of<BookStateCubit>(context).toRead();
+                                BlocProvider.of<LocalRepositoryBloc>(context).add(LocalRepositoryChangeStateEvent(book: book, readingState: ReadingState.toRead));
+                                // BlocProvider.of<BookStateCubit>(context).toRead();
                               }, ),
                             ChoiceChip(label: const Text("Listening"),
                               selected: (BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getState(book: book) == ReadingState.inProgress) ? true : false,
                               onSelected: (val){
-                                BlocProvider.of<LocalRepositoryBloc>(context).localRepository.changeState(book: book,state: ReadingState.inProgress);
-                                BlocProvider.of<BookStateCubit>(context).reading();
+                                BlocProvider.of<LocalRepositoryBloc>(context).add(LocalRepositoryChangeStateEvent(book: book, readingState: ReadingState.inProgress));
+                                // BlocProvider.of<BookStateCubit>(context).reading();
                               }, ),
                             ChoiceChip(label: const Text("Done"),
                               selected: (BlocProvider.of<LocalRepositoryBloc>(context).localRepository.getState(book: book) == ReadingState.done) ? true : false ,
                               onSelected: (val){
-                                BlocProvider.of<LocalRepositoryBloc>(context).localRepository.changeState(book: book,state: ReadingState.done);
-                                BlocProvider.of<BookStateCubit>(context).done();
+                                BlocProvider.of<LocalRepositoryBloc>(context).add(LocalRepositoryChangeStateEvent(book: book, readingState: ReadingState.done));
+                                // BlocProvider.of<BookStateCubit>(context).done();
                               },),
                           ],
                         );
@@ -83,8 +83,8 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
         IconButton(
             onPressed: ()  {
 
-              BlocProvider.of<LocalRepositoryBloc>(context).localRepository.deleteBook(book);
-              BlocProvider.of<BookStateCubit>(context).delete();
+              BlocProvider.of<LocalRepositoryBloc>(context).add(LocalRepositoryDeleteEvent(book));
+              // BlocProvider.of<BookStateCubit>(context).delete();
 
               Navigator.of(context).pop(true);
               },
@@ -96,11 +96,11 @@ Future<bool?> deleteDialog({required Book book, required BuildContext context}){
             },
             icon: const Icon(Icons.close)),
 
-        IconButton(
-            onPressed: (){
-              Navigator.of(context).pop(false);
-            },
-            icon: const Icon(Icons.done)),
+        // IconButton(
+        //     onPressed: (){
+        //       Navigator.of(context).pop(false);
+        //     },
+        //     icon: const Icon(Icons.done)),
       ],
     );
   });
